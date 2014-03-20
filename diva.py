@@ -3,6 +3,7 @@ import Tkinter as tk
 import ttk
 import os, sys
 from git import *
+from gitdb import GitDB
 import ConfigParser
 import threading, time
 import sys
@@ -40,7 +41,7 @@ class Application(tk.Frame):
 	self.always_ontop=int(config.get("diva","always_ontop"))
       
     def init_git(self):
-	repo = Repo(self.my_repo, odbt=GitDB)
+	repo = Repo(self.my_repo, odbt = GitDB)
 	assert repo.bare ==False
 	self.git = repo.git
 	
