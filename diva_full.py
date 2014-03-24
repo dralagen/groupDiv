@@ -7,6 +7,8 @@ from gitdb import GitDB
 import ConfigParser
 import threading, time
 import sys
+#from gitdb import *
+from gitdb import *
 
 
 class Application(tk.Frame):
@@ -35,10 +37,15 @@ class Application(tk.Frame):
 	self.sync_limit=int(config.get("diva","sync_limit"))
 
     def init_git(self):
+<<<<<<< HEAD
 #	repo = Repo(self.my_repo, odbt=GitDB)
         repo = Repo('/tmp/repotest')
         repo.bare == True
 
+=======
+	repo = Repo('/tmp/repotest')
+	repo.bare == True
+>>>>>>> 2fb3fd00feb267ab6a1bdb7ca13e0269abf82a31
 	self.git = repo.git
 
     def run_thread(self):
