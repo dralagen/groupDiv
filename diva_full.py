@@ -3,10 +3,11 @@ import Tkinter as tk
 from ttk import *
 import ScrolledText
 from git import *
+from gitdb import GitDB
 import ConfigParser
 import threading, time
 import sys
-import gitdb
+
 
 class Application(tk.Frame):
     def __init__(self, master=None):
@@ -34,8 +35,10 @@ class Application(tk.Frame):
 	self.sync_limit=int(config.get("diva","sync_limit"))
 
     def init_git(self):
-	repo = Repo(self.my_repo, odbt=GitDB)
-	assert repo.bare ==False
+#	repo = Repo(self.my_repo, odbt=GitDB)
+        repo = Repo('/tmp/repotest')
+        repo.bare == True
+
 	self.git = repo.git
 
     def run_thread(self):
