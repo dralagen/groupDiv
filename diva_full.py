@@ -37,9 +37,8 @@ class Application(tk.Frame):
 	self.sync_limit=int(config.get("diva","sync_limit"))
 
     def init_git(self):
-#	repo = Repo(self.my_repo, odbt=GitDB)
-        repo = Repo('/tmp/repotest')
-        repo.bare == True
+	repo = Repo(self.my_repo, odbt=GitDB)
+	assert repo.bare ==False
 	self.git = repo.git
 
     def run_thread(self):
