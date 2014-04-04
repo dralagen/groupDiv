@@ -40,8 +40,10 @@ class Application(tk.Frame):
 	self.always_ontop=int(config.get("diva","always_ontop"))
       
     def init_git(self):
-	repo = Repo(self.my_repo, odbt=GitDB)
-	assert repo.bare ==False
+        # Configuration for the University
+        #repo = Repo("/Users/hala/tmp/repotest")
+        repo = Repo(self.my_repo, odbt=GitDB)
+	assert repo.bare == False
 	self.git = repo.git
 	
     def run_thread(self):

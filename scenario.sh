@@ -6,7 +6,7 @@
 
 #Put your own directory
 
-DIR='/Users/hala/tmp' 
+DIR='/tmp' 
 DIVA1='diva1'
 DIVA2='diva2'
 DIVA3='diva3'
