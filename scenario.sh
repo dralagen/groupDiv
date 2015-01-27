@@ -31,7 +31,7 @@ git commit -am "second diva1 commit"
 
 echo "--"
 
-sleep 30
+sleep 10
 
 # Action diva2 
 
