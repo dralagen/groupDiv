@@ -4,134 +4,143 @@ import Tix, ttk
 
 class Application(Frame):
 
-	def importer_questions(self, master):
-		fichier_question = open("questions.txt")
-		contenu = fichier_question.read()
-		self.liste_questions = contenu.split("\n")
-		fichier_question.close()
 
-	def changer_question(self, t):
-
-		self.question.config(state = NORMAL)
-
-		self.question.config(state = DISABLED)
-
-	def changer_question_com(self, t):
-		print t
-		self.question2.config(state = NORMAL)
-		x = int(t)
-		self.question2.delete(1.0, END)
-		self.question2.insert(INSERT, self.liste_questions[x])
-		self.question2.config(state = DISABLED)
-	
 	def createTabs(self, master):
 		#definition des onglets
 		self.notebook = Tix.NoteBook(master, width = 630);
-		self.notebook.add("questions", label = "Questions")
-		self.notebook.add("commentaires", label = "Commentaires")
+		self.notebook.add("ue", label = "UE")
+		self.notebook.add("review", label = "Review")
 		self.notebook.grid(column = 0, row = 0)
 
-		#onglet questions
-		self.questions = self.notebook.subwidget_list["questions"]
+		#onglet ue
+		self.ue = self.notebook.subwidget_list["ue"]
 		#contient tous les widget de l'onglet question
-		self.onglet_question = Frame(self.questions)
-		self.onglet_question.grid(column = 0, row = 0)
+		self.onglet_ue = Frame(self.ue)
+		self.onglet_ue.grid(column = 0, row = 0)
 
-		#onglet commentaires
-		self.commentaires = self.notebook.subwidget_list["commentaires"]
+		#onglet review
+		self.review = self.notebook.subwidget_list["review"]
 		#contient tous les widget de l'onglet commentaire
-		self.onglet_commentaires = Frame(self.commentaires)
-		self.onglet_commentaires.grid(column = 0, row = 0)
+		self.onglet_review = Frame(self.review)
+		self.onglet_review.grid(column = 0, row = 0)
 
-	def createWidgetsInQuestion(self, master):
+	def createWidgetsInUE(self, master):
 
 		#bouton qui sert a faire un commit
-		self.envoyer = Button(self.onglet_question, text = "envoyer", width = 5, height = 20)
+		self.envoyer = Button(self.onglet_ue, text = "Envoyer", width = 5, height = 20)
 		self.envoyer.grid(column = 5, row = 3)
 
-		#zone de texte non editable qui contient la question choisie
-		self.question = Text(self.onglet_question, width = 60, height = 3, wrap = WORD)
-		#pour editer la zone de texte il faut la rendre editable avant, puis la remettre non editable
-		self.question.insert(INSERT, "Quel est le nom de la princesse dans la seie de jeux video The legend of Zelda ?")
-		self.question.config(state = DISABLED)
-		self.question.grid(column = 1, row = 0,  columnspan = 2, sticky = W)
-
-		#scroll barre pour la zone de texte editable + zone de texte editable pour repondre a la question
-		self.scroll_texte_V = Scrollbar(self.onglet_question, orient = VERTICAL) 
-		self.texte = Text(self.onglet_question, width = 75, height = 20, wrap = WORD)  
-		self.texte.config(yscrollcommand = self.scroll_texte_V.set) 
-		self.scroll_texte_V.config(command = self.texte.yview)
-		self.scroll_texte_V.grid(column = 4, row = 1, rowspan = 5, sticky = S + N)
-		self.texte.grid(column = 0, row = 1, columnspan = 3, rowspan = 5)
-
-		#liste deroulant pour choisir une question
-		self.choix_question = Tix.ComboBox(self.onglet_question,  listwidth = 30, command=self.changer_question)
-		self.choix_question.entry.config(width = 10,state = 'readonly')
-		self.choix_question.insert(0, "Question 1")
-		self.choix_question.insert(1, "Question 2")
-		self.choix_question.insert(2, "Question 3")
-		self.choix_question.grid(column = 0, row = 0, sticky = E)
+		self.label_mon_ue = Label(self.onglet_ue, text="Description Web and cloud ").grid(column=1, row=0, columnspan = 1)
 
 
-	def createWidgetsInCommentaire(self, master):
+		#scroll barre pour la zone de texte editable + zone de texte editable pour l'ue
+		self.scroll_texte_mon_ue_V = Scrollbar(self.onglet_ue, orient = VERTICAL) 
+		self.texte_mon_ue = Text(self.onglet_ue, width = 75, height = 20, wrap = WORD)  
+		self.texte_mon_ue.config(yscrollcommand = self.scroll_texte_mon_ue_V.set) 
+		self.scroll_texte_mon_ue_V.config(command = self.texte_mon_ue.yview)
+		self.scroll_texte_mon_ue_V.grid(column = 4, row = 1, rowspan = 5, sticky = S + N)
+		self.texte_mon_ue.grid(column = 0, row = 1, columnspan = 3, rowspan = 5)
 
-		#liste deroulant pour choisir une question (pas la meme que la precedente, on utilisera pas la meme fontion
-		self.choix_question_a_com = Tix.ComboBox(self.onglet_commentaires,  listwidth = 30, command=self.changer_question_com)
-		self.choix_question_a_com.entry.config(width = 10,state = 'readonly')
-		for i in range(0, len(self.liste_questions)-2):
-			self.choix_question_a_com.insert(0, i)
-		self.choix_question_a_com.grid(column = 0, row = 0, sticky = E)
+		#zone review
+		self.label_review_mon_ue = Label(self.onglet_ue, text="Les review de mon UE").grid(column = 1, row = 6, columnspan = 1)
 
-		#zone de texte pour afficher la question (meme principe que pour l'onglet question)
+		self.scroll_review_mon_ue_V = Scrollbar(self.onglet_ue, orient = VERTICAL) 
+		self.review_mon_ue = Text(self.onglet_ue, width = 75, height = 20, wrap = WORD)  
+		self.review_mon_ue.config(yscrollcommand = self.scroll_review_mon_ue_V.set) 
+		self.scroll_review_mon_ue_V.config(command = self.review_mon_ue.yview)
+		self.scroll_review_mon_ue_V.grid(column = 4, row = 7, rowspan = 8, sticky = S + N)
+		self.review_mon_ue.grid(column = 0, row = 7, columnspan = 3, rowspan = 8)
 
-		self.question2 = Text(self.onglet_commentaires, width = 55, height = 3, wrap = WORD)
-		self.question2.config(state = DISABLED)
-		self.question2.grid(column = 1, row = 0,  columnspan = 2, sticky = W)
+		#boutons de maj
+		self.label_maj_review_mon_ue = Label(self.onglet_ue, text="Maj de").grid(column=5, row=7, columnspan = 1)
+
+		self.usr1 = Button(self.onglet_ue, text = "USR 1", width = 5, height = 1)
+		self.usr1.grid(column = 5, row = 8)
+
+		self.usr2 = Button(self.onglet_ue, text = "USR 2", width = 5, height = 1)
+		self.usr2.grid(column = 5, row = 9)
+
+		self.usr3 = Button(self.onglet_ue, text = "USR 3", width = 5, height = 1)
+		self.usr3.grid(column = 5, row = 10)
+
+
+		self.usr4 = Button(self.onglet_ue, text = "USR 4", width = 5, height = 1)
+		self.usr4.grid(column = 5, row = 11)
+
+
+		self.usr5 = Button(self.onglet_ue, text = "USR 5", width = 5, height = 1)
+		self.usr5.grid(column = 5, row = 12)
+
+
+		self.usr6 = Button(self.onglet_ue, text = "USR 6", width = 5, height = 1)
+		self.usr6.grid(column = 5, row = 13)
+
+
+		self.usr7 = Button(self.onglet_ue, text = "USR 7", width = 5, height = 1)
+		self.usr7.grid(column = 5, row = 14)
+
+
+
+
+	def createWidgetsInReview(self, master):
+
+		#liste deroulant pour choisir une ue (pas la meme que la precedente, on utilisera pas la meme fontion
+		self.choix_ue_a_review = Tix.ComboBox(self.onglet_review,  listwidth = 30)
+		self.choix_ue_a_review.entry.config(width = 10,state = 'readonly')
+		for i in range(0, len(self.liste_ue)-2):
+			self.choix_ue_a_review.insert(0, i)
+		self.choix_ue_a_review.grid(column = 0, row = 0, sticky = E)
+
+		#zone de texte pour afficher l'ue (meme principe que pour l'onglet ue)
+
+		self.ue_choisie = Text(self.onglet_review, width = 55, height = 3, wrap = WORD)
+		self.ue_choisie.config(state = DISABLED)
+		self.ue_choisie.grid(column = 1, row = 0,  columnspan = 2, sticky = W)
 
 		#affichage de la reponse dans une zone de texte non editable
-		self.l=Label(self.onglet_commentaires, text="Reponse: ").grid(column=0, row=1)
-		self.scroll_reponse_question_V = Scrollbar(self.onglet_commentaires, orient = VERTICAL) 
-		self.reponse_question = Text(self.onglet_commentaires, width = 55, height = 6, wrap = WORD)
-		self.reponse_question.config(state = DISABLED, yscrollcommand = self.scroll_reponse_question_V.set)
-		self.scroll_reponse_question_V.config(command = self.reponse_question.yview)
-		self.scroll_reponse_question_V.grid(column = 3, row = 1, sticky = S + N)
-		self.reponse_question.grid(column = 1, row = 1,  columnspan = 2, sticky = W)
+		self.label_reponse = Label(self.onglet_review, text="Reponse: ").grid(column=0, row=1)
+		self.scroll_reponse_ue_V = Scrollbar(self.onglet_review, orient = VERTICAL) 
+		self.reponse_ue = Text(self.onglet_review, width = 55, height = 6, wrap = WORD)
+		self.reponse_ue.config(state = DISABLED, yscrollcommand = self.scroll_reponse_ue_V.set)
+		self.scroll_reponse_ue_V.config(command = self.reponse_ue.yview)
+		self.scroll_reponse_ue_V.grid(column = 3, row = 1, sticky = S + N)
+		self.reponse_ue.grid(column = 1, row = 1,  columnspan = 2, sticky = W)
 
 		#affichage des commentaire dans une zone de texte non editable
-		self.l2=Label(self.onglet_commentaires, text="Commentaires: ").grid(column=0, row=2)
-		self.scroll_coms_V = Scrollbar(self.onglet_commentaires, orient = VERTICAL) 
-		self.coms = Text(self.onglet_commentaires, width = 55, height = 6, wrap = WORD)
-		self.coms.insert(INSERT, "Quel est le nom de la princesse dans la seie de jeux video The legend of Zelda ?")
-		self.coms.config(state = DISABLED, yscrollcommand = self.scroll_coms_V.set)
-		self.scroll_coms_V.config(command = self.coms.yview)
-		self.scroll_coms_V.grid(column = 3, row = 2, sticky = S + N)
-		self.coms.grid(column = 1, row = 2,  columnspan = 2, sticky = W)
+		self.lable_review = Label(self.onglet_review, text="review: ").grid(column=0, row=2)
+		self.scroll_review_V = Scrollbar(self.onglet_review, orient = VERTICAL) 
+		self.review = Text(self.onglet_review, width = 55, height = 6, wrap = WORD)
+		self.review.insert(INSERT, "Quel est le nom de la princesse dans la seie de jeux video The legend of Zelda ?")
+		self.review.config(state = DISABLED, yscrollcommand = self.scroll_review_V.set)
+		self.scroll_review_V.config(command = self.review.yview)
+		self.scroll_review_V.grid(column = 3, row = 2, sticky = S + N)
+		self.review.grid(column = 1, row = 2,  columnspan = 2, sticky = W)
 
 		#bouton qui sert a faire un pull
-		self.recuperer = Button(self.onglet_commentaires, text = "Mise a jour\nreponse &\ncommentaires", width = 10, height = 12)
+		self.recuperer = Button(self.onglet_review, text = "Mise a jour\nreponse &\nreview", width = 10, height = 12)
 		self.recuperer.grid(column = 4, row = 1, rowspan=2)
 
 		#bouton pour poster un commentaire
-		self.post = Button(self.onglet_commentaires, text = "Post", width = 10, height = 7)
+		self.post = Button(self.onglet_review, text = "Post", width = 10, height = 7)
 		self.post.grid(column = 4, row = 3)
 
 		#zone de texte editable pour ecrire un commentaire
-		self.l3=Label(self.onglet_commentaires, text="Votre\ncommentaire: ").grid(column=0, row=3)
-		self.scroll_texte_commentaire_V = Scrollbar(self.onglet_commentaires, orient = VERTICAL) 
-		self.texte_commentaire = Text(self.onglet_commentaires, width = 55, height = 7, wrap = WORD)  
-		self.texte_commentaire.config(yscrollcommand = self.scroll_texte_commentaire_V.set) 
-		self.scroll_texte_commentaire_V.config(command = self.texte.yview)
-		self.scroll_texte_commentaire_V.grid(column = 3, row = 3, rowspan = 5, sticky = S + N)
-		self.texte_commentaire.grid(column = 1, row = 3, columnspan = 2)
+		self.label_mon_review = Label(self.onglet_review, text="Votre\nreview: ").grid(column=0, row=3)
+		self.scroll_mon_review_V = Scrollbar(self.onglet_review, orient = VERTICAL) 
+		self.texte_mon_review = Text(self.onglet_review, width = 55, height = 7, wrap = WORD)  
+		self.texte_mon_review.config(yscrollcommand = self.scroll_mon_review_V.set) 
+		self.scroll_mon_review_V.config(command = self.texte_mon_review.yview)
+		self.scroll_mon_review_V.grid(column = 3, row = 3, rowspan = 5, sticky = S + N)
+		self.texte_mon_review.grid(column = 1, row = 3, columnspan = 2)
 
     	def __init__(self, master=None):
 		Frame.__init__(self, master)
 		master.title("Interface Tkinter")
-		self.liste_questions = []
-		self.importer_questions(master)
+		self.liste_ue = []
+
 		self.createTabs(master)
-		self.createWidgetsInQuestion(master)
-		self.createWidgetsInCommentaire(master)
+		self.createWidgetsInUE(master)
+		self.createWidgetsInReview(master)
 
 
 root = Tix.Tk()
