@@ -86,52 +86,68 @@ class Application(Frame):
 
 		#liste deroulant pour choisir une ue (pas la meme que la precedente, on utilisera pas la meme fontion
 		self.choix_ue_a_review = Tix.ComboBox(self.onglet_review,  listwidth = 30)
-		self.choix_ue_a_review.entry.config(width = 10,state = 'readonly')
+		self.choix_ue_a_review.entry.config(width = 30,state = 'readonly')
 		for i in range(0, len(self.liste_ue)-2):
 			self.choix_ue_a_review.insert(0, i)
-		self.choix_ue_a_review.grid(column = 0, row = 0, sticky = E)
-
-		#zone de texte pour afficher l'ue (meme principe que pour l'onglet ue)
-
-		self.ue_choisie = Text(self.onglet_review, width = 55, height = 3, wrap = WORD)
-		self.ue_choisie.config(state = DISABLED)
-		self.ue_choisie.grid(column = 1, row = 0,  columnspan = 2, sticky = W)
+		self.choix_ue_a_review.grid(column = 1, row = 0, columnspan=2, sticky = W)
 
 		#affichage de la reponse dans une zone de texte non editable
-		self.label_reponse = Label(self.onglet_review, text="Reponse: ").grid(column=0, row=1)
+		self.label_reponse = Label(self.onglet_review, text="Reponse: ", font=(30)).grid(column=0, row=2)
 		self.scroll_reponse_ue_V = Scrollbar(self.onglet_review, orient = VERTICAL) 
-		self.reponse_ue = Text(self.onglet_review, width = 55, height = 6, wrap = WORD)
+		self.reponse_ue = Text(self.onglet_review, width = 65, height = 15, wrap = WORD)
 		self.reponse_ue.config(state = DISABLED, yscrollcommand = self.scroll_reponse_ue_V.set)
 		self.scroll_reponse_ue_V.config(command = self.reponse_ue.yview)
-		self.scroll_reponse_ue_V.grid(column = 3, row = 1, sticky = S + N)
-		self.reponse_ue.grid(column = 1, row = 1,  columnspan = 2, sticky = W)
+		self.scroll_reponse_ue_V.grid(column = 3, row = 1, rowspan=3, sticky = S + N)
+		self.reponse_ue.grid(column = 1, row = 1,  columnspan = 2, rowspan=3, sticky = W)
 
 		#affichage des commentaire dans une zone de texte non editable
-		self.lable_review = Label(self.onglet_review, text="review: ").grid(column=0, row=2)
+		self.lable_review = Label(self.onglet_review, text="Review: ", font=(30)).grid(column=0, row=5)
 		self.scroll_review_V = Scrollbar(self.onglet_review, orient = VERTICAL) 
-		self.review = Text(self.onglet_review, width = 55, height = 6, wrap = WORD)
-		self.review.insert(INSERT, "Quel est le nom de la princesse dans la seie de jeux video The legend of Zelda ?")
+		self.review = Text(self.onglet_review, width = 65, height = 20, wrap = WORD)
 		self.review.config(state = DISABLED, yscrollcommand = self.scroll_review_V.set)
 		self.scroll_review_V.config(command = self.review.yview)
-		self.scroll_review_V.grid(column = 3, row = 2, sticky = S + N)
-		self.review.grid(column = 1, row = 2,  columnspan = 2, sticky = W)
+		self.scroll_review_V.grid(column = 3, row = 4, rowspan=4 , sticky = S + N)
+		self.review.grid(column = 1, row = 4,  columnspan = 2, rowspan=4, sticky = W)
 
 		#bouton qui sert a faire un pull
-		self.recuperer = Button(self.onglet_review, text = "Mise a jour\nreponse &\nreview", width = 10, height = 12)
-		self.recuperer.grid(column = 4, row = 1, rowspan=2)
+		self.lable_review = Label(self.onglet_review, text="MAJ de ", font=(30)).grid(column=4, row=0)
+
+
+		self.recuperer = Button(self.onglet_review, text = "USR 1", width = 5, height = 1)
+		self.recuperer.grid(column = 4, row = 1)
+
+		self.recuperer = Button(self.onglet_review, text = "USR 2", width = 5, height = 1)
+		self.recuperer.grid(column = 4, row = 2)
+
+		self.recuperer = Button(self.onglet_review, text = "USR 3", width = 5, height = 1)
+		self.recuperer.grid(column = 4, row = 3)
+
+		self.recuperer = Button(self.onglet_review, text = "USR 4", width = 5, height = 1)
+		self.recuperer.grid(column = 4, row = 4)
+
+		self.recuperer = Button(self.onglet_review, text = "USR 5", width = 5, height = 1)
+		self.recuperer.grid(column = 4, row = 5)
+
+		self.recuperer = Button(self.onglet_review, text = "USR 6", width = 5, height = 1)
+		self.recuperer.grid(column = 4, row = 6)
+
+		self.recuperer = Button(self.onglet_review, text = "USR 7", width = 5, height = 1)
+		self.recuperer.grid(column = 4, row = 7)
+
+
 
 		#bouton pour poster un commentaire
-		self.post = Button(self.onglet_review, text = "Post", width = 10, height = 7)
-		self.post.grid(column = 4, row = 3)
+		self.post = Button(self.onglet_review, text = "Post", width = 5, height = 5)
+		self.post.grid(column = 4, row = 9)
 
 		#zone de texte editable pour ecrire un commentaire
-		self.label_mon_review = Label(self.onglet_review, text="Votre\nreview: ").grid(column=0, row=3)
+		self.label_mon_review = Label(self.onglet_review, text="Votre\nreview: ", font=(30)).grid(column=0, row=9)
 		self.scroll_mon_review_V = Scrollbar(self.onglet_review, orient = VERTICAL) 
-		self.texte_mon_review = Text(self.onglet_review, width = 55, height = 7, wrap = WORD)  
+		self.texte_mon_review = Text(self.onglet_review, width = 65, height = 5, wrap = WORD)  
 		self.texte_mon_review.config(yscrollcommand = self.scroll_mon_review_V.set) 
 		self.scroll_mon_review_V.config(command = self.texte_mon_review.yview)
-		self.scroll_mon_review_V.grid(column = 3, row = 3, rowspan = 5, sticky = S + N)
-		self.texte_mon_review.grid(column = 1, row = 3, columnspan = 2)
+		self.scroll_mon_review_V.grid(column = 3, row = 9, sticky = S + N)
+		self.texte_mon_review.grid(column = 1, row = 9, columnspan = 2)
 
     	def __init__(self, master=None):
 		Frame.__init__(self, master)
