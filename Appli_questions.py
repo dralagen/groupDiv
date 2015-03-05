@@ -4,6 +4,25 @@ import Tix, ttk
 
 class Application(Frame):
 
+	#METHODES ACTIONS DES BOUTONS
+
+	#pour commit les texte ecrit par l'utilisateur concernat l'ue
+	def envoyer_mon_ue(self):
+		print("envoyer mon texte");
+
+	#pour pull un usr, cette methode est utilisee par les sept boutons de pull, le parametre usr sert a connaitre quel bouton est utilise
+	def pull_un_usr(self, usr):
+		print(usr)
+
+	#methode a utiliser pour afficher les infos liees a une ue
+	def changer_UE(self, t):
+		print(t);
+
+
+
+
+	#FIN METHODES ACTION
+
 
 	def createTabs(self, master):
 		#definition des onglets
@@ -27,7 +46,7 @@ class Application(Frame):
 	def createWidgetsInUE(self, master):
 
 		#bouton qui sert a faire un commit
-		self.envoyer = Button(self.onglet_ue, text = "Envoyer", width = 5, height = 20)
+		self.envoyer = Button(self.onglet_ue, text = "Envoyer", width = 5, height = 20, command=self.envoyer_mon_ue)
 		self.envoyer.grid(column = 5, row = 3)
 
 		self.label_mon_ue = Label(self.onglet_ue, text="Description Web and cloud ").grid(column=1, row=0, columnspan = 1)
@@ -55,28 +74,35 @@ class Application(Frame):
 		self.label_maj_review_mon_ue = Label(self.onglet_ue, text="Maj de").grid(column=5, row=7, columnspan = 1)
 
 		self.usr1 = Button(self.onglet_ue, text = "USR 1", width = 5, height = 1)
+		self.usr1.config(command = lambda x="usr1":self.pull_un_usr(x))
 		self.usr1.grid(column = 5, row = 8)
 
 		self.usr2 = Button(self.onglet_ue, text = "USR 2", width = 5, height = 1)
+		self.usr2.config(command = lambda x="usr2":self.pull_un_usr(x))
 		self.usr2.grid(column = 5, row = 9)
 
 		self.usr3 = Button(self.onglet_ue, text = "USR 3", width = 5, height = 1)
+		self.usr3.config(command = lambda x="usr3":self.pull_un_usr(x))		
 		self.usr3.grid(column = 5, row = 10)
 
 
 		self.usr4 = Button(self.onglet_ue, text = "USR 4", width = 5, height = 1)
+		self.usr4.config(command = lambda x="usr4":self.pull_un_usr(x))		
 		self.usr4.grid(column = 5, row = 11)
 
 
 		self.usr5 = Button(self.onglet_ue, text = "USR 5", width = 5, height = 1)
+		self.usr5.config(command = lambda x="usr5":self.pull_un_usr(x))		
 		self.usr5.grid(column = 5, row = 12)
 
 
 		self.usr6 = Button(self.onglet_ue, text = "USR 6", width = 5, height = 1)
+		self.usr6.config(command = lambda x="usr6":self.pull_un_usr(x))		
 		self.usr6.grid(column = 5, row = 13)
 
 
 		self.usr7 = Button(self.onglet_ue, text = "USR 7", width = 5, height = 1)
+		self.usr7.config(command = lambda x="usr7":self.pull_un_usr(x))		
 		self.usr7.grid(column = 5, row = 14)
 
 
@@ -85,10 +111,28 @@ class Application(Frame):
 	def createWidgetsInReview(self, master):
 
 		#liste deroulant pour choisir une ue (pas la meme que la precedente, on utilisera pas la meme fontion
-		self.choix_ue_a_review = Tix.ComboBox(self.onglet_review,  listwidth = 30)
-		self.choix_ue_a_review.entry.config(width = 30,state = 'readonly')
-		for i in range(0, len(self.liste_ue)-2):
-			self.choix_ue_a_review.insert(0, i)
+		self.choix_ue_a_review = Tix.ComboBox(self.onglet_review,  listwidth = 150, command=self.changer_UE)
+		self.choix_ue_a_review.entry.config(width = 45,state = 'readonly')
+
+		self.choix_ue_a_review.insert(0, "Web & cloud")
+		self.choix_ue_a_review.insert(0, "Web semantique")
+		self.choix_ue_a_review.insert(0, "Verification et test")
+		self.choix_ue_a_review.insert(0, "Concepts et outils de developpement")
+		self.choix_ue_a_review.insert(0, "Anglais 1 & 2")
+		self.choix_ue_a_review.insert(0, "Techniques de communication & Connaissances de l'entreprise")
+		self.choix_ue_a_review.insert(0, "Temps reel")
+		self.choix_ue_a_review.insert(0, "SGBD")
+		self.choix_ue_a_review.insert(0, "Genie logiciel")
+
+		self.choix_ue_a_review.insert(0, "IHM")
+		self.choix_ue_a_review.insert(0, "Conception de logiciel extensible")
+		self.choix_ue_a_review.insert(0, "Structure de donnee & Complexitee")
+		self.choix_ue_a_review.insert(0, "Constraint programming & Multicore programming")
+		self.choix_ue_a_review.insert(0, "Recherche")
+		self.choix_ue_a_review.insert(0, "Compilation")
+		self.choix_ue_a_review.insert(0, "Reseaux")
+
+
 		self.choix_ue_a_review.grid(column = 1, row = 0, columnspan=2, sticky = W)
 
 		#affichage de la reponse dans une zone de texte non editable
@@ -113,31 +157,31 @@ class Application(Frame):
 		self.lable_review = Label(self.onglet_review, text="MAJ de ", font=(30)).grid(column=4, row=0)
 
 
-		self.recuperer = Button(self.onglet_review, text = "USR 1", width = 5, height = 1)
+		self.recuperer = Button(self.onglet_review, text = "USR 1", width = 5, height = 1, command = lambda x="usr1":self.pull_un_usr(x))
 		self.recuperer.grid(column = 4, row = 1)
 
-		self.recuperer = Button(self.onglet_review, text = "USR 2", width = 5, height = 1)
+		self.recuperer = Button(self.onglet_review, text = "USR 2", width = 5, height = 1, command = lambda x="usr2":self.pull_un_usr(x))
 		self.recuperer.grid(column = 4, row = 2)
 
-		self.recuperer = Button(self.onglet_review, text = "USR 3", width = 5, height = 1)
+		self.recuperer = Button(self.onglet_review, text = "USR 3", width = 5, height = 1, command = lambda x="usr3":self.pull_un_usr(x))
 		self.recuperer.grid(column = 4, row = 3)
 
-		self.recuperer = Button(self.onglet_review, text = "USR 4", width = 5, height = 1)
+		self.recuperer = Button(self.onglet_review, text = "USR 4", width = 5, height = 1, command = lambda x="usr4":self.pull_un_usr(x))
 		self.recuperer.grid(column = 4, row = 4)
 
-		self.recuperer = Button(self.onglet_review, text = "USR 5", width = 5, height = 1)
+		self.recuperer = Button(self.onglet_review, text = "USR 5", width = 5, height = 1, command = lambda x="usr5":self.pull_un_usr(x))
 		self.recuperer.grid(column = 4, row = 5)
 
-		self.recuperer = Button(self.onglet_review, text = "USR 6", width = 5, height = 1)
+		self.recuperer = Button(self.onglet_review, text = "USR 6", width = 5, height = 1, command = lambda x="usr6":self.pull_un_usr(x))
 		self.recuperer.grid(column = 4, row = 6)
 
-		self.recuperer = Button(self.onglet_review, text = "USR 7", width = 5, height = 1)
+		self.recuperer = Button(self.onglet_review, text = "USR 7", width = 5, height = 1, command = lambda x="usr7":self.pull_un_usr(x))
 		self.recuperer.grid(column = 4, row = 7)
 
 
 
 		#bouton pour poster un commentaire
-		self.post = Button(self.onglet_review, text = "Post", width = 5, height = 5)
+		self.post = Button(self.onglet_review, text = "Post", width = 5, height = 5, command = self.envoyer_mon_ue)
 		self.post.grid(column = 4, row = 9)
 
 		#zone de texte editable pour ecrire un commentaire
