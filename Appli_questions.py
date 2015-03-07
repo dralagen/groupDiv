@@ -1,24 +1,63 @@
 from Tkinter import *
 import Tix, ttk
 
+# On part du principe que tous les fichier de review et sur les ue existent deja
 
 class Application(Frame):
 
-	#METHODES ACTIONS DES BOUTONS
+	#def charger_review(self):
+	
+	def string_review(self, ue):
+		mes_review = ""
+		for value in self.les_review[ue]:
+			mes_review += value 
 
-	#pour commit les texte ecrit par l'utilisateur concernat l'ue
+		return mes_review
+
+
 	def envoyer_mon_ue(self):
-		print("envoyer mon texte");
+		nom_fichier = "texte_" + self.mon_ue+".txt"
+		fichier = open(nom_fichier, "w")
+		fichier.write(self.texte_mon_ue.get(1.0, END))
+		fichier.close()
+		self.commit()
+	
+	def charger_texte(self, nom_ue):
+		nom_fichier = "texte_" + nom_ue + ".txt"
+		fichier = open(nom_fichier, "r")
+		contenu_fichier = fichier.readlines()
+		fichier.close()
+		retour = ""
+		for ligne in contenu_fichier:
+			retour += ligne
+		return retour
+
+	def poster_commentaire(self):
+		nom_fichier = "review_" + self.choix_ue_a_review.entry.get()+".txt"
+		fichier = open(nom_fichier, "a")
+		fichier.write(self.texte_mon_review.get(1.0, END))
+		self.texte_mon_review.delete(1.0, END)
+		fichier.close()
+		self.commit()
+
+	def commit(self):
+		print("je commit")
 
 	#pour pull un usr, cette methode est utilisee par les sept boutons de pull, le parametre usr sert a connaitre quel bouton est utilise
 	def pull_un_usr(self, usr):
 		print(usr)
 
 	#methode a utiliser pour afficher les infos liees a une ue
-	def changer_UE(self, t):
-		print(t);
+	def changer_UE(self, evt):
+		self.reponse_ue.config(state = NORMAL)
+		self.reponse_ue.delete(1.0, END)
+		self.reponse_ue.insert(END, self.charger_texte(self.choix_ue_a_review.entry.get()))
+		self.reponse_ue.config(state = DISABLED)
 
-
+		self.review.config(state = NORMAL)
+		self.review.delete(1.0, END)
+		self.review.insert(END, self.string_review(self.choix_ue_a_review.entry.get()))
+		self.review.config(state = DISABLED)
 
 
 	#FIN METHODES ACTION
@@ -49,13 +88,14 @@ class Application(Frame):
 		self.envoyer = Button(self.onglet_ue, text = "Envoyer", width = 5, height = 20, command=self.envoyer_mon_ue)
 		self.envoyer.grid(column = 5, row = 3)
 
-		self.label_mon_ue = Label(self.onglet_ue, text="Description Web and cloud ").grid(column=1, row=0, columnspan = 1)
+		self.label_mon_ue = Label(self.onglet_ue, text="Description " + self.mon_ue).grid(column=1, row=0, columnspan = 1)
 
 
 		#scroll barre pour la zone de texte editable + zone de texte editable pour l'ue
 		self.scroll_texte_mon_ue_V = Scrollbar(self.onglet_ue, orient = VERTICAL) 
 		self.texte_mon_ue = Text(self.onglet_ue, width = 75, height = 20, wrap = WORD)  
 		self.texte_mon_ue.config(yscrollcommand = self.scroll_texte_mon_ue_V.set) 
+		self.texte_mon_ue.insert(END, self.charger_texte(self.mon_ue))
 		self.scroll_texte_mon_ue_V.config(command = self.texte_mon_ue.yview)
 		self.scroll_texte_mon_ue_V.grid(column = 4, row = 1, rowspan = 5, sticky = S + N)
 		self.texte_mon_ue.grid(column = 0, row = 1, columnspan = 3, rowspan = 5)
@@ -65,7 +105,8 @@ class Application(Frame):
 
 		self.scroll_review_mon_ue_V = Scrollbar(self.onglet_ue, orient = VERTICAL) 
 		self.review_mon_ue = Text(self.onglet_ue, width = 75, height = 20, wrap = WORD)  
-		self.review_mon_ue.config(yscrollcommand = self.scroll_review_mon_ue_V.set) 
+		self.review_mon_ue.insert(END, self.string_review(self.mon_ue))
+		self.review_mon_ue.config(state = DISABLED, yscrollcommand = self.scroll_review_mon_ue_V.set) 
 		self.scroll_review_mon_ue_V.config(command = self.review_mon_ue.yview)
 		self.scroll_review_mon_ue_V.grid(column = 4, row = 7, rowspan = 8, sticky = S + N)
 		self.review_mon_ue.grid(column = 0, row = 7, columnspan = 3, rowspan = 8)
@@ -111,10 +152,11 @@ class Application(Frame):
 	def createWidgetsInReview(self, master):
 
 		#liste deroulant pour choisir une ue (pas la meme que la precedente, on utilisera pas la meme fontion
-		self.choix_ue_a_review = Tix.ComboBox(self.onglet_review,  listwidth = 150, command=self.changer_UE)
+		self.choix_ue_a_review = Tix.ComboBox(self.onglet_review,  listwidth = 150)
+		self.choix_ue_a_review.slistbox.listbox.bind('<ButtonRelease-1>', self.changer_UE)
 		self.choix_ue_a_review.entry.config(width = 45,state = 'readonly')
 
-		self.choix_ue_a_review.insert(0, "Web & cloud")
+		self.choix_ue_a_review.insert(0, "Web and cloud")
 		self.choix_ue_a_review.insert(0, "Web semantique")
 		self.choix_ue_a_review.insert(0, "Verification et test")
 		self.choix_ue_a_review.insert(0, "Concepts et outils de developpement")
@@ -131,23 +173,28 @@ class Application(Frame):
 		self.choix_ue_a_review.insert(0, "Recherche")
 		self.choix_ue_a_review.insert(0, "Compilation")
 		self.choix_ue_a_review.insert(0, "Reseaux")
-
+	
+		self.choix_ue_a_review.pick(0)
 
 		self.choix_ue_a_review.grid(column = 1, row = 0, columnspan=2, sticky = W)
+
 
 		#affichage de la reponse dans une zone de texte non editable
 		self.label_reponse = Label(self.onglet_review, text="Reponse: ", font=(30)).grid(column=0, row=2)
 		self.scroll_reponse_ue_V = Scrollbar(self.onglet_review, orient = VERTICAL) 
 		self.reponse_ue = Text(self.onglet_review, width = 65, height = 15, wrap = WORD)
+		self.reponse_ue.insert(END, self.charger_texte(self.choix_ue_a_review.entry.get()))
 		self.reponse_ue.config(state = DISABLED, yscrollcommand = self.scroll_reponse_ue_V.set)
+
 		self.scroll_reponse_ue_V.config(command = self.reponse_ue.yview)
 		self.scroll_reponse_ue_V.grid(column = 3, row = 1, rowspan=3, sticky = S + N)
 		self.reponse_ue.grid(column = 1, row = 1,  columnspan = 2, rowspan=3, sticky = W)
 
-		#affichage des commentaire dans une zone de texte non editable
+		#affichage des review dans une zone de texte non editable
 		self.lable_review = Label(self.onglet_review, text="Review: ", font=(30)).grid(column=0, row=5)
 		self.scroll_review_V = Scrollbar(self.onglet_review, orient = VERTICAL) 
 		self.review = Text(self.onglet_review, width = 65, height = 20, wrap = WORD)
+		self.review.insert(END, self.string_review(self.choix_ue_a_review.entry.get()))
 		self.review.config(state = DISABLED, yscrollcommand = self.scroll_review_V.set)
 		self.scroll_review_V.config(command = self.review.yview)
 		self.scroll_review_V.grid(column = 3, row = 4, rowspan=4 , sticky = S + N)
@@ -181,7 +228,7 @@ class Application(Frame):
 
 
 		#bouton pour poster un commentaire
-		self.post = Button(self.onglet_review, text = "Post", width = 5, height = 5, command = self.envoyer_mon_ue)
+		self.post = Button(self.onglet_review, text = "Post", width = 5, height = 5, command = self.poster_commentaire)
 		self.post.grid(column = 4, row = 9)
 
 		#zone de texte editable pour ecrire un commentaire
@@ -197,7 +244,8 @@ class Application(Frame):
 		Frame.__init__(self, master)
 		master.title("Interface Tkinter")
 		self.liste_ue = []
-
+		self.les_review = {"Web and cloud": ["tes1", "test2", "test3"], "Reseaux": ["g", "h"]}
+		self.mon_ue = "Web and cloud"
 		self.createTabs(master)
 		self.createWidgetsInUE(master)
 		self.createWidgetsInReview(master)
