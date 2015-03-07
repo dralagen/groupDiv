@@ -13,7 +13,8 @@ class Application(Frame):
 			nom_fichier = "review_" +usr+".txt"
 			fichier = open(nom_fichier, "r")
 			contenu_fichier = fichier.readlines()
-			temp[usr] = contenu_fichier				
+			if contenu_fichier != []:
+				temp[usr] = contenu_fichier			
 			fichier.close()
 		#ici temp contient les contenu de chaque fichier de chaque usr
 		while temp != {}:
@@ -65,9 +66,25 @@ class Application(Frame):
 		nom_fichier = "review_" + self.nom_usr + ".txt"
 		fichier = open(nom_fichier, "a")
 		maintenant = datetime.now()
-		fichier.write(str(maintenant.hour) + str(maintenant.minute) + str(maintenant.second) +" " + self.choix_ue_a_review.entry.get() + " " +  self.texte_mon_review.get(1.0, END))
-		self.texte_mon_review.delete(1.0, END)
+		fichier.write("\n" + str(maintenant.hour).zfill(2) + str(maintenant.minute).zfill(2) + str(maintenant.second).zfill(2) +"|" + self.choix_ue_a_review.entry.get() + "|" + self.nom_usr + ": " +  self.texte_mon_review.get().replace("\n", " "))
+
+		self.review.config(state = NORMAL)
+		self.review.insert(END,"\n" +  self.nom_usr + ": " + self.texte_mon_review.get())
+		self.review.config(state = DISABLED)
+
+		if self.choix_ue_a_review.entry.get() == self.mon_ue: 
+			self.review_mon_ue.config(state = NORMAL)
+			self.review_mon_ue.insert(END,"\n" +  self.nom_usr + ": " + self.texte_mon_review.get(1.0, END))
+			self.review_mon_ue.config(state = DISABLED)
+
+
+		self.texte_mon_review.delete(0, END)
 		fichier.close()
+
+		if self.les_review.has_key(self.choix_ue_a_review.entry.get()):
+			self.les_review[self.choix_ue_a_review.entry.get()].append(self.texte_mon_review.get())
+		else:
+			self.les_review[self.choix_ue_a_review.entry.get()] = [self.texte_mon_review.get()]
 		self.commit()
 
 	def commit(self):
@@ -75,6 +92,16 @@ class Application(Frame):
 
 	#pour pull un usr, cette methode est utilisee par les sept boutons de pull, le parametre usr sert a connaitre quel bouton est utilise
 	def pull_un_usr(self, usr):
+		self.charger_review()
+		self.review.config(state = NORMAL)
+		self.review.delete(1.0, END)
+		self.review.insert(END, self.string_review(self.choix_ue_a_review.entry.get()))
+		self.review.config(state = DISABLED)
+
+		self.review_mon_ue.config(state = NORMAL)
+		self.review_mon_ue.delete(1.0, END)
+		self.review_mon_ue.insert(END, self.string_review(self.mon_ue))
+		self.review_mon_ue.config(state = DISABLED)
 		print(usr)
 
 	#methode a utiliser pour afficher les infos liees a une ue
@@ -212,7 +239,7 @@ class Application(Frame):
 		#affichage de la reponse dans une zone de texte non editable
 		self.label_reponse = Label(self.onglet_review, text="Reponse: ", font=(30)).grid(column=0, row=2)
 		self.scroll_reponse_ue_V = Scrollbar(self.onglet_review, orient = VERTICAL) 
-		self.reponse_ue = Text(self.onglet_review, width = 65, height = 15, wrap = WORD)
+		self.reponse_ue = Text(self.onglet_review, width = 65, height = 18, wrap = WORD)
 		self.reponse_ue.insert(END, self.charger_texte(self.choix_ue_a_review.entry.get()))
 		self.reponse_ue.config(state = DISABLED, yscrollcommand = self.scroll_reponse_ue_V.set)
 
@@ -258,23 +285,23 @@ class Application(Frame):
 
 
 		#bouton pour poster un commentaire
-		self.post = Button(self.onglet_review, text = "Post", width = 5, height = 5, command = self.poster_commentaire)
+		self.post = Button(self.onglet_review, text = "Post", width = 5, height = 1, command = self.poster_commentaire)
 		self.post.grid(column = 4, row = 9)
 
 		#zone de texte editable pour ecrire un commentaire
 		self.label_mon_review = Label(self.onglet_review, text="Votre\nreview: ", font=(30)).grid(column=0, row=9)
-		self.scroll_mon_review_V = Scrollbar(self.onglet_review, orient = VERTICAL) 
-		self.texte_mon_review = Text(self.onglet_review, width = 65, height = 5, wrap = WORD)  
-		self.texte_mon_review.config(yscrollcommand = self.scroll_mon_review_V.set) 
-		self.scroll_mon_review_V.config(command = self.texte_mon_review.yview)
-		self.scroll_mon_review_V.grid(column = 3, row = 9, sticky = S + N)
+		#self.scroll_mon_review_V = Scrollbar(self.onglet_review, orient = VERTICAL) 
+		self.texte_mon_review = Entry(self.onglet_review, width = 56)  
+		 
+		#self.scroll_mon_review_V.config(command = self.texte_mon_review.yview)
+		#self.scroll_mon_review_V.grid(column = 3, row = 9, sticky = S + N)
 		self.texte_mon_review.grid(column = 1, row = 9, columnspan = 2)
 
     	def __init__(self, master=None):
 		Frame.__init__(self, master)
 		master.title("Interface Tkinter")
 		self.nom_usr = "usr8"
-		self.liste_usr = ["usr1", "usr2"]
+		self.liste_usr = ["usr1", "usr2", "usr8"]
 
 		self.liste_ue = ["Web and cloud", "Reseaux"]
 		self.les_review = {}
