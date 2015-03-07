@@ -1,22 +1,51 @@
 from Tkinter import *
 import Tix, ttk
+from datetime import datetime
 
 # On part du principe que tous les fichier de review et sur les ue existent deja
 
 class Application(Frame):
 
-	#def charger_review(self):
+	def charger_review(self):
+		self.les_review.clear()
+		temp = {}
+		for usr in self.liste_usr:
+			nom_fichier = "review_" +usr+".txt"
+			fichier = open(nom_fichier, "r")
+			contenu_fichier = fichier.readlines()
+			temp[usr] = contenu_fichier				
+			fichier.close()
+		#ici temp contient les contenu de chaque fichier de chaque usr
+		while temp != {}:
+			maxi = 999999
+			k = ""
+			v = ""
+			for key in temp:
+				nombre = temp[key][0][0:6]
+				if int(nombre) < maxi:
+					maxi = int(nombre)
+					k = key
+			v = temp[k][0]
+			mes_donnees = v.split("|")
+			if self.les_review.has_key(mes_donnees[1]):
+				p = mes_donnees[1]
+				self.les_review[p].append(mes_donnees[2])
+			else:
+				self.les_review[mes_donnees[1]] = [mes_donnees[2]]
+			temp[k].remove(v)
+			if temp[k] == []:
+				del temp[k]
+
 	
 	def string_review(self, ue):
 		mes_review = ""
 		for value in self.les_review[ue]:
 			mes_review += value 
-
 		return mes_review
 
 
 	def envoyer_mon_ue(self):
-		nom_fichier = "texte_" + self.mon_ue+".txt"
+		nom_fichier = "texte_" + self.mon_ue + ".txt"
 		fichier = open(nom_fichier, "w")
 		fichier.write(self.texte_mon_ue.get(1.0, END))
 		fichier.close()
@@ -33,9 +62,10 @@ class Application(Frame):
 		return retour
 
 	def poster_commentaire(self):
-		nom_fichier = "review_" + self.choix_ue_a_review.entry.get()+".txt"
+		nom_fichier = "review_" + self.nom_usr + ".txt"
 		fichier = open(nom_fichier, "a")
-		fichier.write(self.texte_mon_review.get(1.0, END))
+		maintenant = datetime.now()
+		fichier.write(str(maintenant.hour) + str(maintenant.minute) + str(maintenant.second) +" " + self.choix_ue_a_review.entry.get() + " " +  self.texte_mon_review.get(1.0, END))
 		self.texte_mon_review.delete(1.0, END)
 		fichier.close()
 		self.commit()
@@ -243,9 +273,13 @@ class Application(Frame):
     	def __init__(self, master=None):
 		Frame.__init__(self, master)
 		master.title("Interface Tkinter")
-		self.liste_ue = []
-		self.les_review = {"Web and cloud": ["tes1", "test2", "test3"], "Reseaux": ["g", "h"]}
+		self.nom_usr = "usr8"
+		self.liste_usr = ["usr1", "usr2"]
+
+		self.liste_ue = ["Web and cloud", "Reseaux"]
+		self.les_review = {}
 		self.mon_ue = "Web and cloud"
+		self.charger_review()
 		self.createTabs(master)
 		self.createWidgetsInUE(master)
 		self.createWidgetsInReview(master)
