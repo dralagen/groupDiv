@@ -1,12 +1,14 @@
- # -*- coding: iso-8859-1 -*-
 from Tkinter import *
 from git import *
-import ttk
+import ConfigParser
 import Tix
 import os
 import sys
 import socket
 from datetime import datetime
+
+import logging
+logging.basicConfig(level=logging.INFO)
 
 # On part du principe que tous les fichier de review et sur les ue existent deja
 
@@ -65,7 +67,8 @@ class Application(Frame):
         fichier.close()
 
         self.repo.index.add([nom_fichier])
-        self.repo.index.commit("update ue")
+        self.repo.index.commit("update ue " + self.mon_ue)
+        logging.info("commit update ue")
 
     def charger_texte(self, nom_ue):
         return self.get_file_content("texte_" + nom_ue + ".txt")
@@ -97,38 +100,45 @@ class Application(Frame):
             self.les_review[self.choix_ue_a_review.entry.get()] = [self.texte_mon_review.get()]
 
         # commit change
-        self.repo.index.add([nom_fichier])
-        self.repo.index.commit("add rewiew")
+
+        self.repo.index.add([nom_fichier], False)
+        self.repo.index.commit("add review by " + self.nom_usr)
+        logging.info("commit new review")
 
     # pour pull un usr, cette methode est utilisee par les sept boutons de pull,
     # le parametre usr sert a connaitre quel bouton est utilise
     def pull_un_usr(self, usr):
-    		# TODO pull on remote usr 
+        try:
+            self.repo.remote(usr).pull(refspec="refs/heads/master")
+            logging.info("pull to user : " + usr)
+        except GitCommandError as e:
+            logging.error(e)
+
         self.charger_review()
+        self.ui_update(self.choix_ue_a_review.entry.get())
+
+    # methode a utiliser pour afficher les infos liees a une ue
+    def changer_UE(self, event):
+        self.ui_update(self.choix_ue_a_review.entry.get())
+
+    # FIN METHODES ACTION
+
+    def ui_update(self, ue_review):
+        self.reponse_ue.config(state=NORMAL)
+        self.reponse_ue.delete(1.0, END)
+        self.reponse_ue.insert(END, self.charger_texte(ue_review))
+        self.reponse_ue.config(state=DISABLED)
+
         self.review.config(state=NORMAL)
         self.review.delete(1.0, END)
-        self.review.insert(END, self.string_review(self.choix_ue_a_review.entry.get()))
+        self.review.insert(END, self.string_review(ue_review))
         self.review.config(state=DISABLED)
 
         self.review_mon_ue.config(state=NORMAL)
         self.review_mon_ue.delete(1.0, END)
         self.review_mon_ue.insert(END, self.string_review(self.mon_ue))
         self.review_mon_ue.config(state=DISABLED)
-        print(usr)
 
-    # methode a utiliser pour afficher les infos liees a une ue
-    def changer_UE(self, machin):
-        self.reponse_ue.config(state=NORMAL)
-        self.reponse_ue.delete(1.0, END)
-        self.reponse_ue.insert(END, self.charger_texte(self.choix_ue_a_review.entry.get()))
-        self.reponse_ue.config(state=DISABLED)
-
-        self.review.config(state=NORMAL)
-        self.review.delete(1.0, END)
-        self.review.insert(END, self.string_review(self.choix_ue_a_review.entry.get()))
-        self.review.config(state=DISABLED)
-
-    # FIN METHODES ACTION
 
     def createTabs(self, master):
         # definition des onglets
@@ -180,18 +190,13 @@ class Application(Frame):
         #boutons de maj
         self.label_maj_review_mon_ue = Label(self.onglet_ue, text="Maj de").grid(column=5, row=7, columnspan=1)
 
-        ind_usr = 1
-        ind_place = 1
+        i = 0
 
         for usr in sorted(self.liste_usr):
-            if usr != self.nom_usr :       
-                    self.boutons_maj = Button(self.onglet_ue, text= "USR " + str(ind_usr), width=5, height=1,
-                    							command=lambda x=usr : self.pull_un_usr(x))
-                    self.boutons_maj.grid(column=5, row= (7+ind_place))
-                    ind_usr = ind_usr+1
-                    ind_place = ind_place+1
-            else :
-                    ind_usr = ind_usr+1 
+            self.boutons_maj = Button(self.onglet_ue, text= self.config.get(usr,"name"), width=5, height=1,
+                                      command=lambda x=usr : self.pull_un_usr(x))
+            self.boutons_maj.grid(column=5, row= (8+i))
+            i += 1
                     
     def createWidgetsInReview(self):
 
@@ -200,7 +205,7 @@ class Application(Frame):
         self.choix_ue_a_review.slistbox.listbox.bind('<ButtonRelease-1>', self.changer_UE)
         self.choix_ue_a_review.entry.config(width=45, state='readonly')
         for a, b in self.liste_usr.iteritems():
-        	self.choix_ue_a_review.insert(0,b)
+            self.choix_ue_a_review.insert(0,b)
 
         self.choix_ue_a_review.pick(0)
 
@@ -231,17 +236,12 @@ class Application(Frame):
         self.lable_review = Label(self.onglet_review, text="MAJ de ", font=30).grid(column=4, row=0)
         
         i = 1
-        j = 1
         for usr in sorted(self.liste_usr):
-            if usr != self.nom_usr :       
-                    self.recuperer = Button(self.onglet_review, text= "USR " + str(i), width=5, height=1,
-                    							command=lambda x=usr : self.pull_un_usr(x))
-                    self.recuperer.grid(column=4, row=j)
-                    i = i+1
-                    j = j+1
-            else :
-                    i = i+1  
-                             		                            		                    						            		  
+            self.recuperer = Button(self.onglet_review, text= self.config.get(usr,"name"), width=5, height=1,
+                                    command=lambda x=usr : self.pull_un_usr(x))
+            self.recuperer.grid(column=4, row=i)
+            i += 1
+
         #bouton pour poster un commentaire
         self.post = Button(self.onglet_review, text="Post", width=5, height=1, command=self.poster_commentaire)
         self.post.grid(column=4, row=9)
@@ -254,40 +254,40 @@ class Application(Frame):
         #self.scroll_mon_review_V.grid(column = 3, row = 9, sticky = S + N)
         self.texte_mon_review.grid(column=1, row=9, columnspan=2)
 
-    def get_usr_ue_name(self,filename):
-        file_path = self.repo.working_dir + "/" + filename
-        if os.path.isfile(file_path) and os.access(file_path, os.R_OK):
-            fileStream = open(file_path, "r")
+    def get_usr_ue_name(self, filename):
+        self.config = ConfigParser.RawConfigParser()
+        self.config.read(filename)
 
-            for line in fileStream:
-            	if line != "\n":
-                    content = line
-                    temp = content.split("\n")[0]
-                    temporaire = temp.split(":");
-                    if self.user_computer == temporaire[1] :
-                         self.nom_usr = temporaire[0]
-                         self.mon_ue = temporaire[2]                       
-                    else:
-                         self.liste_usr[temporaire[0]] = temporaire[2]
-                         self.liste_host[temporaire[0]] = temporaire[1]
+        user_computer = socket.gethostname()
 
-            fileStream.close()      
+        for section in self.config.sections():
+            hostname = self.config.get(section, "hostname")
+            if hostname == user_computer:
+                self.mon_ue = self.config.get(section, "ue")
+                self.nom_usr = section
+            else:
+                self.liste_usr[section] = self.config.get(section, "ue")
+
+                try:
+                    self.repo.delete_remote(section)
+                except GitCommandError:
+                    pass
+
+                self.repo.create_remote(section, "git://" + self.config.get(section, "hostname") +"/")
+
     
     def __init__(self, master=None):
         Frame.__init__(self, master)
         master.title("Interface Tkinter")
         self.repo = Repo(os.environ["DIVA_REPO_DIR"], odbt=GitDB)
         assert not self.repo.bare
-		  #TODO ajout du remote 
-        self.user_computer = socket.gethostname()
+        os.environ["GIT_MERGE_AUTOEDIT"] = "no"
         self.mon_ue = ""
         self.nom_usr = "" 
 
         #liste[usr1] = matiere
         self.liste_usr = {}
-        #liste[usr1] = host
-        self.liste_host = {}
-        self.get_usr_ue_name("config.txt")
+        self.get_usr_ue_name(sys.argv[1])
 
         self.les_review = {}
         self.charger_review()
