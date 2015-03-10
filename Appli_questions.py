@@ -1,5 +1,7 @@
+ # -*- coding: iso-8859-1 -*-
 from Tkinter import *
 from git import *
+import ttk
 import Tix
 import os
 import sys
@@ -58,7 +60,7 @@ class Application(Frame):
     def envoyer_mon_ue(self):
         nom_fichier = "texte_" + self.mon_ue + ".txt"
         fichier = open(self.repo.working_dir+"/"+nom_fichier, "w")
-        fichier.write(self.texte_mon_ue.get(1.0, END))
+        fichier.write(self.texte_mon_ue.get(1.0, END).encode('UTF-8'))
         fichier.close()
 
         self.repo.index.add([nom_fichier])
@@ -71,10 +73,10 @@ class Application(Frame):
         nom_fichier = "review_" + self.nom_usr + ".txt"
         fichier = open(self.repo.working_dir+"/" + nom_fichier, "a")
         maintenant = datetime.now()
-        fichier.write(
+        fichier.write((
             str(maintenant.hour).zfill(2) + str(maintenant.minute).zfill(2) + str(maintenant.second).zfill(
                 2) + "|" + self.choix_ue_a_review.entry.get() + "|" + self.nom_usr + ": " + self.texte_mon_review.get().replace(
-                "\n", " ") + "\n")
+                "\n", " ") + "\n").encode('UTF-8'))
 
         self.review.config(state=NORMAL)
         self.review.insert(END, self.nom_usr + ": " + self.texte_mon_review.get() + "\n")
@@ -113,7 +115,7 @@ class Application(Frame):
         print(usr)
 
     # methode a utiliser pour afficher les infos liees a une ue
-    def changer_UE(self):
+    def changer_UE(self, machin):
         self.reponse_ue.config(state=NORMAL)
         self.reponse_ue.delete(1.0, END)
         self.reponse_ue.insert(END, self.charger_texte(self.choix_ue_a_review.entry.get()))
@@ -156,7 +158,7 @@ class Application(Frame):
         # scroll barre pour la zone de texte editable + zone de texte editable pour l'ue
         self.scroll_texte_mon_ue_V = Scrollbar(self.onglet_ue, orient=VERTICAL)
         self.texte_mon_ue = Text(self.onglet_ue, width=75, height=20, wrap=WORD)
-        self.texte_mon_ue.config(yscrollcommand=self.scroll_texte_mon_ue_V.set)
+        self.texte_mon_ue.config(yscrollcommand=self.scroll_texte_mon_ue_V.set, background="#FFFFFF", foreground="Black")
         self.texte_mon_ue.insert(END, self.charger_texte(self.mon_ue))
         self.scroll_texte_mon_ue_V.config(command=self.texte_mon_ue.yview)
         self.scroll_texte_mon_ue_V.grid(column=4, row=1, rowspan=5, sticky=S + N)
@@ -168,7 +170,7 @@ class Application(Frame):
         self.scroll_review_mon_ue_V = Scrollbar(self.onglet_ue, orient=VERTICAL)
         self.review_mon_ue = Text(self.onglet_ue, width=75, height=20, wrap=WORD)
         self.review_mon_ue.insert(END, self.string_review(self.mon_ue))
-        self.review_mon_ue.config(state=DISABLED, yscrollcommand=self.scroll_review_mon_ue_V.set)
+        self.review_mon_ue.config(state=DISABLED, yscrollcommand=self.scroll_review_mon_ue_V.set, background="#DBDBDB", foreground="Black")
         self.scroll_review_mon_ue_V.config(command=self.review_mon_ue.yview)
         self.scroll_review_mon_ue_V.grid(column=4, row=7, rowspan=8, sticky=S + N)
         self.review_mon_ue.grid(column=0, row=7, columnspan=3, rowspan=8)
@@ -238,7 +240,7 @@ class Application(Frame):
         self.scroll_reponse_ue_V = Scrollbar(self.onglet_review, orient=VERTICAL)
         self.reponse_ue = Text(self.onglet_review, width=65, height=18, wrap=WORD)
         self.reponse_ue.insert(END, self.charger_texte(self.choix_ue_a_review.entry.get()))
-        self.reponse_ue.config(state=DISABLED, yscrollcommand=self.scroll_reponse_ue_V.set)
+        self.reponse_ue.config(state=DISABLED, yscrollcommand=self.scroll_reponse_ue_V.set, background="#DBDBDB", foreground="Black")
 
         self.scroll_reponse_ue_V.config(command=self.reponse_ue.yview)
         self.scroll_reponse_ue_V.grid(column=3, row=1, rowspan=3, sticky=S + N)
@@ -249,7 +251,7 @@ class Application(Frame):
         self.scroll_review_V = Scrollbar(self.onglet_review, orient=VERTICAL)
         self.review = Text(self.onglet_review, width=65, height=20, wrap=WORD)
         self.review.insert(END, self.string_review(self.choix_ue_a_review.entry.get()))
-        self.review.config(state=DISABLED, yscrollcommand=self.scroll_review_V.set)
+        self.review.config(state=DISABLED, yscrollcommand=self.scroll_review_V.set, background="#DBDBDB", foreground="Black")
         self.scroll_review_V.config(command=self.review.yview)
         self.scroll_review_V.grid(column=3, row=4, rowspan=4, sticky=S + N)
         self.review.grid(column=1, row=4, columnspan=2, rowspan=4, sticky=W)
@@ -292,8 +294,7 @@ class Application(Frame):
         #zone de texte editable pour ecrire un commentaire
         self.label_mon_review = Label(self.onglet_review, text="Votre\nreview: ", font=30).grid(column=0, row=9)
         #self.scroll_mon_review_V = Scrollbar(self.onglet_review, orient = VERTICAL)
-        self.texte_mon_review = Entry(self.onglet_review, width=56)
-
+        self.texte_mon_review = Entry(self.onglet_review, width=56, background="#FFFFFF", foreground="Black")
         #self.scroll_mon_review_V.config(command = self.texte_mon_review.yview)
         #self.scroll_mon_review_V.grid(column = 3, row = 9, sticky = S + N)
         self.texte_mon_review.grid(column=1, row=9, columnspan=2)
@@ -301,7 +302,6 @@ class Application(Frame):
     def __init__(self, master=None):
         Frame.__init__(self, master)
         master.title("Interface Tkinter")
-
         self.repo = Repo(os.environ["DIVA_REPO_DIR"], odbt=GitDB)
         assert not self.repo.bare
 
@@ -318,5 +318,6 @@ class Application(Frame):
 
 
 root = Tix.Tk()
+
 app = Application(master=root)
 app.mainloop()
