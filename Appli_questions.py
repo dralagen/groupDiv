@@ -11,11 +11,11 @@ class Application(Frame):
         file_path = self.repo.working_dir + "/" + filename
         content = ""
         if os.path.isfile(file_path) and os.access(file_path, os.R_OK):
-            file = open(file_path, "r")
-            for line in file:
+            fileStream = open(file_path, "r")
+            for line in fileStream:
                 if line != "\n":
                     content += line
-            file.close()
+            fileStream.close()
         return content
 
     def charger_review(self):
@@ -112,7 +112,7 @@ class Application(Frame):
         print(usr)
 
     # methode a utiliser pour afficher les infos liees a une ue
-    def changer_UE(self, evt):
+    def changer_UE(self):
         self.reponse_ue.config(state=NORMAL)
         self.reponse_ue.delete(1.0, END)
         self.reponse_ue.insert(END, self.charger_texte(self.choix_ue_a_review.entry.get()))
@@ -144,7 +144,7 @@ class Application(Frame):
         self.onglet_review = Frame(self.review)
         self.onglet_review.grid(column=0, row=0)
 
-    def createWidgetsInUE(self, master):
+    def createWidgetsInUE(self):
 
         # bouton qui sert a faire un commit
         self.envoyer = Button(self.onglet_ue, text="Envoyer", width=5, height=20, command=self.envoyer_mon_ue)
@@ -203,7 +203,7 @@ class Application(Frame):
         self.usr7.config(command=lambda x="usr7": self.pull_un_usr(x))
         self.usr7.grid(column=5, row=14)
 
-    def createWidgetsInReview(self, master):
+    def createWidgetsInReview(self):
 
         # liste deroulant pour choisir une ue (pas la meme que la precedente, on utilisera pas la meme fontion
         self.choix_ue_a_review = Tix.ComboBox(self.onglet_review, listwidth=150)
@@ -233,7 +233,7 @@ class Application(Frame):
         self.choix_ue_a_review.grid(column=1, row=0, columnspan=2, sticky=W)
 
         # affichage de la reponse dans une zone de texte non editable
-        self.label_reponse = Label(self.onglet_review, text="Reponse: ", font=(30)).grid(column=0, row=2)
+        self.label_reponse = Label(self.onglet_review, text="Reponse: ", font=30).grid(column=0, row=2)
         self.scroll_reponse_ue_V = Scrollbar(self.onglet_review, orient=VERTICAL)
         self.reponse_ue = Text(self.onglet_review, width=65, height=18, wrap=WORD)
         self.reponse_ue.insert(END, self.charger_texte(self.choix_ue_a_review.entry.get()))
@@ -244,7 +244,7 @@ class Application(Frame):
         self.reponse_ue.grid(column=1, row=1, columnspan=2, rowspan=3, sticky=W)
 
         #affichage des review dans une zone de texte non editable
-        self.lable_review = Label(self.onglet_review, text="Review: ", font=(30)).grid(column=0, row=5)
+        self.lable_review = Label(self.onglet_review, text="Review: ", font=30).grid(column=0, row=5)
         self.scroll_review_V = Scrollbar(self.onglet_review, orient=VERTICAL)
         self.review = Text(self.onglet_review, width=65, height=20, wrap=WORD)
         self.review.insert(END, self.string_review(self.choix_ue_a_review.entry.get()))
@@ -254,7 +254,7 @@ class Application(Frame):
         self.review.grid(column=1, row=4, columnspan=2, rowspan=4, sticky=W)
 
         #bouton qui sert a faire un pull
-        self.lable_review = Label(self.onglet_review, text="MAJ de ", font=(30)).grid(column=4, row=0)
+        self.lable_review = Label(self.onglet_review, text="MAJ de ", font=30).grid(column=4, row=0)
 
         self.recuperer = Button(self.onglet_review, text="USR 1", width=5, height=1,
                                 command=lambda x="usr1": self.pull_un_usr(x))
@@ -289,7 +289,7 @@ class Application(Frame):
         self.post.grid(column=4, row=9)
 
         #zone de texte editable pour ecrire un commentaire
-        self.label_mon_review = Label(self.onglet_review, text="Votre\nreview: ", font=(30)).grid(column=0, row=9)
+        self.label_mon_review = Label(self.onglet_review, text="Votre\nreview: ", font=30).grid(column=0, row=9)
         #self.scroll_mon_review_V = Scrollbar(self.onglet_review, orient = VERTICAL)
         self.texte_mon_review = Entry(self.onglet_review, width=56)
 
@@ -312,8 +312,8 @@ class Application(Frame):
         self.mon_ue = "Web and cloud"
         self.charger_review()
         self.createTabs(master)
-        self.createWidgetsInUE(master)
-        self.createWidgetsInReview(master)
+        self.createWidgetsInUE()
+        self.createWidgetsInReview()
 
 
 root = Tix.Tk()
