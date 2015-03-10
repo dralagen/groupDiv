@@ -5,6 +5,7 @@ import ttk
 import Tix
 import os
 import sys
+import socket
 from datetime import datetime
 
 # On part du principe que tous les fichier de review et sur les ue existent deja
@@ -102,6 +103,7 @@ class Application(Frame):
     # pour pull un usr, cette methode est utilisee par les sept boutons de pull,
     # le parametre usr sert a connaitre quel bouton est utilise
     def pull_un_usr(self, usr):
+    		# TODO pull on remote usr 
         self.charger_review()
         self.review.config(state=NORMAL)
         self.review.delete(1.0, END)
@@ -298,17 +300,47 @@ class Application(Frame):
         #self.scroll_mon_review_V.grid(column = 3, row = 9, sticky = S + N)
         self.texte_mon_review.grid(column=1, row=9, columnspan=2)
 
+    def get_usr_ue_name(self,filename):
+   
+        file_path = self.repo.working_dir + "/" + filename
+        if os.path.isfile(file_path) and os.access(file_path, os.R_OK):
+            fileStream = open(file_path, "r")
+            for line in fileStream:
+            	if line != "\n":
+                    content = line
+                    temp = content.split("\n")[0]
+                    temporaire = temp.split(":");
+                    print temporaire[1]
+                    if self.user_computer == temporaire[1] :
+                         self.nom_usr = temporaire[0]
+                         self.mon_ue = temporaire[2]
+                    self.liste_usr[temporaire[0]] = temporaire[2]
+                    self.liste_host[temporaire[0]] = temporaire[1]
+            fileStream.close()
+    
     def __init__(self, master=None):
         Frame.__init__(self, master)
         master.title("Interface Tkinter")
         self.repo = Repo(os.environ["DIVA_REPO_DIR"], odbt=GitDB)
         assert not self.repo.bare
+		  #TODO ajout du remote 
+        self.user_computer = socket.gethostname()
+        self.mon_ue = ""
+        self.nom_usr = "" 
 
+<<<<<<< HEAD
         self.nom_usr = "usr8"
         self.liste_usr = ["usr1", "usr2", "usr8"]
         self.liste_ue = ["Web and cloud", "Reseaux"]
+=======
+        #liste[usr1] = matiere
+        self.liste_usr = {}
+        #liste[usr1] = host
+        self.liste_host = {}
+        self.get_usr_ue_name("config.txt")
+
+>>>>>>> recuperation valeur fichier config
         self.les_review = {}
-        self.mon_ue = "Web and cloud"
         self.charger_review()
         self.createTabs(master)
         self.createWidgetsInUE()
