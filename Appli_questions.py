@@ -180,34 +180,18 @@ class Application(Frame):
         #boutons de maj
         self.label_maj_review_mon_ue = Label(self.onglet_ue, text="Maj de").grid(column=5, row=7, columnspan=1)
 
-        self.usr1 = Button(self.onglet_ue, text="USR 1", width=5, height=1)
-        self.usr1.config(command=lambda x="usr1": self.pull_un_usr(x))
-        self.usr1.grid(column=5, row=8)
-
-        self.usr2 = Button(self.onglet_ue, text="USR 2", width=5, height=1)
-        self.usr2.config(command=lambda x="usr2": self.pull_un_usr(x))
-        self.usr2.grid(column=5, row=9)
-
-        self.usr3 = Button(self.onglet_ue, text="USR 3", width=5, height=1)
-        self.usr3.config(command=lambda x="usr3": self.pull_un_usr(x))
-        self.usr3.grid(column=5, row=10)
-
-        self.usr4 = Button(self.onglet_ue, text="USR 4", width=5, height=1)
-        self.usr4.config(command=lambda x="usr4": self.pull_un_usr(x))
-        self.usr4.grid(column=5, row=11)
-
-        self.usr5 = Button(self.onglet_ue, text="USR 5", width=5, height=1)
-        self.usr5.config(command=lambda x="usr5": self.pull_un_usr(x))
-        self.usr5.grid(column=5, row=12)
-
-        self.usr6 = Button(self.onglet_ue, text="USR 6", width=5, height=1)
-        self.usr6.config(command=lambda x="usr6": self.pull_un_usr(x))
-        self.usr6.grid(column=5, row=13)
-
-        self.usr7 = Button(self.onglet_ue, text="USR 7", width=5, height=1)
-        self.usr7.config(command=lambda x="usr7": self.pull_un_usr(x))
-        self.usr7.grid(column=5, row=14)
-
+        ind_usr = 1
+        ind_place = 1
+        for usr in sorted(self.liste_usr):
+            if usr != self.nom_usr :       
+                    self.boutons_maj = Button(self.onglet_ue, text= "USR " + str(ind_usr), width=5, height=1,
+                    							command=lambda x=usr : self.pull_un_usr(x))
+                    self.boutons_maj.grid(column=5, row= (7+ind_place))
+                    ind_usr = ind_usr+1
+                    ind_place = ind_place+1
+            else :
+                    ind_usr = ind_usr+1 
+                    
     def createWidgetsInReview(self):
 
         # liste deroulant pour choisir une ue (pas la meme que la precedente, on utilisera pas la meme fontion
@@ -259,35 +243,19 @@ class Application(Frame):
 
         #bouton qui sert a faire un pull
         self.lable_review = Label(self.onglet_review, text="MAJ de ", font=30).grid(column=4, row=0)
-
-        self.recuperer = Button(self.onglet_review, text="USR 1", width=5, height=1,
-                                command=lambda x="usr1": self.pull_un_usr(x))
-        self.recuperer.grid(column=4, row=1)
-
-        self.recuperer = Button(self.onglet_review, text="USR 2", width=5, height=1,
-                                command=lambda x="usr2": self.pull_un_usr(x))
-        self.recuperer.grid(column=4, row=2)
-
-        self.recuperer = Button(self.onglet_review, text="USR 3", width=5, height=1,
-                                command=lambda x="usr3": self.pull_un_usr(x))
-        self.recuperer.grid(column=4, row=3)
-
-        self.recuperer = Button(self.onglet_review, text="USR 4", width=5, height=1,
-                                command=lambda x="usr4": self.pull_un_usr(x))
-        self.recuperer.grid(column=4, row=4)
-
-        self.recuperer = Button(self.onglet_review, text="USR 5", width=5, height=1,
-                                command=lambda x="usr5": self.pull_un_usr(x))
-        self.recuperer.grid(column=4, row=5)
-
-        self.recuperer = Button(self.onglet_review, text="USR 6", width=5, height=1,
-                                command=lambda x="usr6": self.pull_un_usr(x))
-        self.recuperer.grid(column=4, row=6)
-
-        self.recuperer = Button(self.onglet_review, text="USR 7", width=5, height=1,
-                                command=lambda x="usr7": self.pull_un_usr(x))
-        self.recuperer.grid(column=4, row=7)
-
+        
+        i = 1
+        j = 1
+        for usr in sorted(self.liste_usr):
+            if usr != self.nom_usr :       
+                    self.recuperer = Button(self.onglet_review, text= "USR " + str(i), width=5, height=1,
+                    							command=lambda x=usr : self.pull_un_usr(x))
+                    self.recuperer.grid(column=4, row=j)
+                    i = i+1
+                    j = j+1
+            else :
+                    i = i+1  
+                             		                            		                    						            		  
         #bouton pour poster un commentaire
         self.post = Button(self.onglet_review, text="Post", width=5, height=1, command=self.poster_commentaire)
         self.post.grid(column=4, row=9)
@@ -305,18 +273,18 @@ class Application(Frame):
         file_path = self.repo.working_dir + "/" + filename
         if os.path.isfile(file_path) and os.access(file_path, os.R_OK):
             fileStream = open(file_path, "r")
+
             for line in fileStream:
             	if line != "\n":
                     content = line
                     temp = content.split("\n")[0]
                     temporaire = temp.split(":");
-                    print temporaire[1]
                     if self.user_computer == temporaire[1] :
                          self.nom_usr = temporaire[0]
-                         self.mon_ue = temporaire[2]
+                         self.mon_ue = temporaire[2]                       
                     self.liste_usr[temporaire[0]] = temporaire[2]
                     self.liste_host[temporaire[0]] = temporaire[1]
-            fileStream.close()
+            fileStream.close()      
     
     def __init__(self, master=None):
         Frame.__init__(self, master)
@@ -328,18 +296,12 @@ class Application(Frame):
         self.mon_ue = ""
         self.nom_usr = "" 
 
-<<<<<<< HEAD
-        self.nom_usr = "usr8"
-        self.liste_usr = ["usr1", "usr2", "usr8"]
-        self.liste_ue = ["Web and cloud", "Reseaux"]
-=======
         #liste[usr1] = matiere
         self.liste_usr = {}
         #liste[usr1] = host
         self.liste_host = {}
         self.get_usr_ue_name("config.txt")
 
->>>>>>> recuperation valeur fichier config
         self.les_review = {}
         self.charger_review()
         self.createTabs(master)
