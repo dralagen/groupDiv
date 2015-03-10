@@ -222,7 +222,6 @@ class Application(Frame):
         self.choix_ue_a_review.insert(0, "Temps reel")
         self.choix_ue_a_review.insert(0, "SGBD")
         self.choix_ue_a_review.insert(0, "Genie logiciel")
-
         self.choix_ue_a_review.insert(0, "IHM")
         self.choix_ue_a_review.insert(0, "Conception de logiciel extensible")
         self.choix_ue_a_review.insert(0, "Structure de donnee & Complexitee")
@@ -307,7 +306,6 @@ class Application(Frame):
 
         self.nom_usr = "usr8"
         self.liste_usr = ["usr1", "usr2", "usr8"]
-
         self.liste_ue = ["Web and cloud", "Reseaux"]
         self.les_review = {}
         self.mon_ue = "Web and cloud"
@@ -318,6 +316,5 @@ class Application(Frame):
 
 
 root = Tix.Tk()
-
 app = Application(master=root)
 app.mainloop()
