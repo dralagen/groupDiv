@@ -2,6 +2,7 @@
 import Tkinter as tk   
 import ttk
 from git import *
+import Image, ImageTk
 import ConfigParser
 import threading, time
 import sys
@@ -89,6 +90,16 @@ class Application(tk.Frame):
         self.quitButton = tk.Button(self, text='Quit', command=self.quitAction)            
         self.quitButton.grid(sticky='WE',columnspan=2,padx=5,pady=5)
                    
+        self.can1 = tk.Canvas(self , width = 50 , height = 50)
+
+        self.img = Image.open('xwing.gif')
+       # self.img = ImageTk.PhotoImage(self.img) 
+        self.photo = ImageTk.PhotoImage(self.img)
+        self.item = self.can1.create_image(0, 0, image = self.photo)
+        self.can1.grid(row=z+1 , column=0)
+
+
+
     def quitAction(self):
       self.update_stop.set()
       if self.thread.isAlive():
