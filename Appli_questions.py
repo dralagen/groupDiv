@@ -182,6 +182,7 @@ class Application(Frame):
 
         ind_usr = 1
         ind_place = 1
+
         for usr in sorted(self.liste_usr):
             if usr != self.nom_usr :       
                     self.boutons_maj = Button(self.onglet_ue, text= "USR " + str(ind_usr), width=5, height=1,
@@ -195,26 +196,11 @@ class Application(Frame):
     def createWidgetsInReview(self):
 
         # liste deroulant pour choisir une ue (pas la meme que la precedente, on utilisera pas la meme fontion
-        self.choix_ue_a_review = Tix.ComboBox(self.onglet_review, listwidth=150)
+        self.choix_ue_a_review = Tix.ComboBox(self.onglet_review)
         self.choix_ue_a_review.slistbox.listbox.bind('<ButtonRelease-1>', self.changer_UE)
         self.choix_ue_a_review.entry.config(width=45, state='readonly')
-
-        self.choix_ue_a_review.insert(0, "Web and cloud")
-        self.choix_ue_a_review.insert(0, "Web semantique")
-        self.choix_ue_a_review.insert(0, "Verification et test")
-        self.choix_ue_a_review.insert(0, "Concepts et outils de developpement")
-        self.choix_ue_a_review.insert(0, "Anglais 1 & 2")
-        self.choix_ue_a_review.insert(0, "Techniques de communication & Connaissances de l'entreprise")
-        self.choix_ue_a_review.insert(0, "Temps reel")
-        self.choix_ue_a_review.insert(0, "SGBD")
-        self.choix_ue_a_review.insert(0, "Genie logiciel")
-        self.choix_ue_a_review.insert(0, "IHM")
-        self.choix_ue_a_review.insert(0, "Conception de logiciel extensible")
-        self.choix_ue_a_review.insert(0, "Structure de donnee & Complexitee")
-        self.choix_ue_a_review.insert(0, "Constraint programming & Multicore programming")
-        self.choix_ue_a_review.insert(0, "Recherche")
-        self.choix_ue_a_review.insert(0, "Compilation")
-        self.choix_ue_a_review.insert(0, "Reseaux")
+        for a, b in self.liste_usr.iteritems():
+        	self.choix_ue_a_review.insert(0,b)
 
         self.choix_ue_a_review.pick(0)
 
@@ -269,7 +255,6 @@ class Application(Frame):
         self.texte_mon_review.grid(column=1, row=9, columnspan=2)
 
     def get_usr_ue_name(self,filename):
-   
         file_path = self.repo.working_dir + "/" + filename
         if os.path.isfile(file_path) and os.access(file_path, os.R_OK):
             fileStream = open(file_path, "r")
@@ -282,8 +267,10 @@ class Application(Frame):
                     if self.user_computer == temporaire[1] :
                          self.nom_usr = temporaire[0]
                          self.mon_ue = temporaire[2]                       
-                    self.liste_usr[temporaire[0]] = temporaire[2]
-                    self.liste_host[temporaire[0]] = temporaire[1]
+                    else:
+                         self.liste_usr[temporaire[0]] = temporaire[2]
+                         self.liste_host[temporaire[0]] = temporaire[1]
+
             fileStream.close()      
     
     def __init__(self, master=None):
