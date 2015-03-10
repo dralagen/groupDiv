@@ -2,6 +2,7 @@ from Tkinter import *
 from git import *
 import Tix
 import os
+import sys
 from datetime import datetime
 
 # On part du principe que tous les fichier de review et sur les ue existent deja
