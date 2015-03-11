@@ -8,7 +8,7 @@ import socket
 from datetime import datetime
 
 import logging
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.INFO, format='%(levelname)s:%(asctime)s:%(message)s')
 
 # On part du principe que tous les fichier de review et sur les ue existent deja
 
@@ -62,8 +62,15 @@ class Application(Frame):
 
     def envoyer_mon_ue(self):
         nom_fichier = "texte_" + self.mon_ue + ".txt"
+        oldContent = self.get_file_content(nom_fichier).strip()
+        newContent = self.texte_mon_ue.get(1.0, END).strip().encode('UTF-8')
+        logging.debug("old content : " + oldContent)
+        logging.debug("new content : " + newContent)
+        if oldContent == newContent:
+            return
+
         fichier = open(self.repo.working_dir+"/"+nom_fichier, "w")
-        fichier.write(self.texte_mon_ue.get(1.0, END).encode('UTF-8'))
+        fichier.write(newContent)
         fichier.close()
 
         self.repo.index.add([nom_fichier])
@@ -74,26 +81,30 @@ class Application(Frame):
         return self.get_file_content("texte_" + nom_ue + ".txt")
 
     def poster_commentaire(self):
+        newReview = str(self.texte_mon_review.get()).replace("\n", " ").strip()
+        if not newReview:
+            return
+
         nom_fichier = "review_" + self.nom_usr + ".txt"
         fichier = open(self.repo.working_dir+"/" + nom_fichier, "a")
         maintenant = datetime.now()
         fichier.write((
             str(maintenant.hour).zfill(2) + str(maintenant.minute).zfill(2) + str(maintenant.second).zfill(
-                2) + "|" + self.choix_ue_a_review.entry.get() + "|" + self.nom_usr + ": " + self.texte_mon_review.get().replace(
-                "\n", " ") + "\n").encode('UTF-8'))
+                2) + "|" + self.choix_ue_a_review.entry.get() + "|" + self.nom_usr + ": " + newReview + "\n").encode('UTF-8'))
 
         self.review.config(state=NORMAL)
-        self.review.insert(END, self.nom_usr + ": " + self.texte_mon_review.get() + "\n")
+        self.review.insert(END, self.nom_usr + ": " + newReview + "\n")
         self.review.config(state=DISABLED)
 
         if self.choix_ue_a_review.entry.get() == self.mon_ue:
             self.review_mon_ue.config(state=NORMAL)
-            self.review_mon_ue.insert(END, self.nom_usr + ": " + self.texte_mon_review.get() + "\n")
+            self.review_mon_ue.insert(END, self.nom_usr + ": " + newReview + "\n")
             self.review_mon_ue.config(state=DISABLED)
 
         self.texte_mon_review.delete(0, END)
         fichier.close()
 
+        # FIXME : self.texte_mon_review.get() is null now
         if self.choix_ue_a_review.entry.get() in self.les_review:
             self.les_review[self.choix_ue_a_review.entry.get()].append(self.texte_mon_review.get())
         else:
@@ -110,7 +121,7 @@ class Application(Frame):
     def pull_un_usr(self, usr):
         try:
             self.repo.remote(usr).pull(refspec="refs/heads/master")
-            logging.info("pull to user : " + usr)
+            logging.info("pull from " + usr)
         except GitCommandError as e:
             logging.error(e)
 
