@@ -27,6 +27,11 @@ class Application(Frame):
     def charger_review(self):
         self.les_review.clear()
         temp = {}
+        content = self.get_file_content("review_" + self.nom_usr + ".txt")
+        if content != "":
+            temp[self.mon_ue] = content.split('\n')
+            temp[self.mon_ue].remove('')
+
         for usr in self.liste_usr:
             content = self.get_file_content("review_" + usr + ".txt")
             if content != "":
@@ -70,7 +75,7 @@ class Application(Frame):
             return
 
         fichier = open(self.repo.working_dir+"/"+nom_fichier, "w")
-        fichier.write(newContent)
+        fichier.write(newContent.encode('UTF-8'))
         fichier.close()
 
         self.repo.index.add([nom_fichier])
@@ -81,7 +86,7 @@ class Application(Frame):
         return self.get_file_content("texte_" + nom_ue + ".txt")
 
     def poster_commentaire(self):
-        newReview = str(self.texte_mon_review.get()).replace("\n", " ").strip()
+        newReview = str(self.texte_mon_review.get().encode('UTF-8')).replace("\n", " ").strip()
         if not newReview:
             return
 
