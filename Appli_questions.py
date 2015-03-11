@@ -104,12 +104,6 @@ class Application(Frame):
         self.texte_mon_review.delete(0, END)
         fichier.close()
 
-        # FIXME : self.texte_mon_review.get() is null now
-        if self.choix_ue_a_review.entry.get() in self.les_review:
-            self.les_review[self.choix_ue_a_review.entry.get()].append(self.texte_mon_review.get())
-        else:
-            self.les_review[self.choix_ue_a_review.entry.get()] = [self.texte_mon_review.get()]
-
         # commit change
 
         self.repo.index.add([nom_fichier], False)
@@ -120,7 +114,7 @@ class Application(Frame):
     # le parametre usr sert a connaitre quel bouton est utilise
     def pull_un_usr(self, usr):
         try:
-            self.repo.remote(usr).pull(refspec="refs/heads/master")
+            self.repo.git.execute(["git", "pull", usr, "master"])
             logging.info("pull from " + usr)
         except GitCommandError as e:
             logging.error(e)
@@ -208,7 +202,7 @@ class Application(Frame):
                                       command=lambda x=usr : self.pull_un_usr(x))
             self.boutons_maj.grid(column=5, row= (8+i))
             i += 1
-                    
+
     def createWidgetsInReview(self):
 
         # liste deroulant pour choisir une ue (pas la meme que la precedente, on utilisera pas la meme fontion
@@ -245,7 +239,7 @@ class Application(Frame):
 
         #bouton qui sert a faire un pull
         self.lable_review = Label(self.onglet_review, text="MAJ de ", font=30).grid(column=4, row=0)
-        
+
         i = 1
         for usr in sorted(self.liste_usr):
             self.recuperer = Button(self.onglet_review, text= self.config.get(usr,"name"), width=5, height=1,
@@ -284,9 +278,9 @@ class Application(Frame):
                 except GitCommandError:
                     pass
 
-                self.repo.create_remote(section, "git://" + self.config.get(section, "hostname") +"/")
+                self.repo.create_remote(section, "git://" + self.config.get(section, "hostname").strip() + "/")
 
-    
+
     def __init__(self, master=None):
         Frame.__init__(self, master)
         master.title("Interface Tkinter")
@@ -294,7 +288,7 @@ class Application(Frame):
         assert not self.repo.bare
         os.environ["GIT_MERGE_AUTOEDIT"] = "no"
         self.mon_ue = ""
-        self.nom_usr = "" 
+        self.nom_usr = ""
 
         #liste[usr1] = matiere
         self.liste_usr = {}
