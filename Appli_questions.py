@@ -68,14 +68,14 @@ class Application(Frame):
     def envoyer_mon_ue(self):
         nom_fichier = "texte_" + self.mon_ue + ".txt"
         oldContent = self.get_file_content(nom_fichier).strip()
-        newContent = self.texte_mon_ue.get(1.0, END).strip().encode('UTF-8')
+        newContent = self.texte_mon_ue.get(1.0, END).encode("UTF-8").strip()
         logging.debug("old content : " + oldContent)
         logging.debug("new content : " + newContent)
         if oldContent == newContent:
             return
 
         fichier = open(self.repo.working_dir+"/"+nom_fichier, "w")
-        fichier.write(newContent.encode('UTF-8'))
+        fichier.write(newContent)
         fichier.close()
 
         self.repo.index.add([nom_fichier])
@@ -86,7 +86,7 @@ class Application(Frame):
         return self.get_file_content("texte_" + nom_ue + ".txt")
 
     def poster_commentaire(self):
-        newReview = str(self.texte_mon_review.get().encode('UTF-8')).replace("\n", " ").strip()
+        newReview = str(self.texte_mon_review.get().encode("UTF-8")).replace("\n", " ").strip()
         if not newReview:
             return
 
@@ -95,7 +95,7 @@ class Application(Frame):
         maintenant = datetime.now()
         fichier.write((
             str(maintenant.hour).zfill(2) + str(maintenant.minute).zfill(2) + str(maintenant.second).zfill(
-                2) + "|" + self.choix_ue_a_review.entry.get() + "|" + self.nom_usr + ": " + newReview + "\n").encode('UTF-8'))
+                2) + "|" + self.choix_ue_a_review.entry.get() + "|" + self.nom_usr + ": " + newReview + "\n"))
 
         self.review.config(state=NORMAL)
         self.review.insert(END, self.nom_usr + ": " + newReview + "\n")
