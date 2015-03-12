@@ -1,5 +1,4 @@
 from Tkinter import *
-from git import *
 import ConfigParser
 import Tix
 import os
@@ -8,11 +7,15 @@ import socket
 from datetime import datetime
 
 import logging
+from git import GitCommandError, Repo
+from gitdb import GitDB
+import diva
+
+
 logging.basicConfig(level=logging.INFO, format='%(levelname)s:%(asctime)s:%(message)s')
 
 # On part du principe que tous les fichier de review et sur les ue existent deja
-
-class Application(Frame):
+class Questionaire(Frame):
     def get_file_content(self, filename):
         file_path = self.repo.working_dir + "/" + filename
         content = ""
@@ -305,7 +308,18 @@ class Application(Frame):
         self.createWidgetsInUE()
         self.createWidgetsInReview()
 
+        diva_root = Tix.Tk()
+        self.diva = diva.DivaWidget(master=diva_root)
+        screen_width = self.diva.winfo_screenwidth()
+        screen_height = self.diva.winfo_screenheight()
+        Xpos = str(screen_width-150)
+        self.diva.master.title('diva')
+        self.diva.master.geometry('500x500+'+Xpos+'+50')
+        #self.diva.master.overrideredirect(self.diva.always_ontop)
+        self.diva.master.wm_iconbitmap(bitmap = "@diva.xbm")
+
+
 
 root = Tix.Tk()
-app = Application(master=root)
+app = Questionaire(master=root)
 app.mainloop()

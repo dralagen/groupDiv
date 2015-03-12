@@ -1,15 +1,14 @@
 #!/usr/bin/env python2.7
-import Tkinter as tk   
-import ttk
-from git import *
-import Image, ImageTk
+import Tkinter as tk
 import ConfigParser
-import threading, time
-import sys
+import threading
 import logging
+
+from git import *
+
 logging.basicConfig(level=logging.DEBUG, format='%(levelname)s:%(asctime)s:%(message)s')
 
-class Application(tk.Frame):              
+class DivaWidget(tk.Frame):
     
     def __init__(self, master=None):
         tk.Frame.__init__(self, master)   
@@ -52,7 +51,7 @@ class Application(tk.Frame):
         self.thread.start()
 
     def threadUpdateRepo(self):
-        while(not self.update_stop.is_set()):
+        while not self.update_stop.is_set():
           self.git.remote("update")
           self.calculateGDtot()
           self.update_stop.wait(self.refresh_rate)
@@ -78,7 +77,7 @@ class Application(tk.Frame):
             self.Label22.grid(column=0,row=z, columnspan="7",sticky='WE',padx=2,pady=2)
             mes_h[i] = tk.Label(self, textvariable=self.mes_amis[i])
             mes_h[i].grid(column=8,row=z,sticky='W',padx=2,pady=2)
-            z=z+1
+            z += 1
 
 
 ##########################################
@@ -90,7 +89,7 @@ class Application(tk.Frame):
         
         self.quitButton = tk.Button(self, text='Quit', command=self.quitAction)            
         self.quitButton.grid(sticky='WE',columnspan=8,row=z, padx=5,pady=5)
-        z=z+1     
+        z += 1
 
     def quitAction(self):
       self.update_stop.set()
@@ -104,7 +103,7 @@ class Application(tk.Frame):
         except GitCommandError:
             H1 = ""
 
-        if (H1 != ""):
+        if H1 != "":
             H1=set(H1.split('\n'))
 
         sumHi=len(H1)
@@ -113,21 +112,20 @@ class Application(tk.Frame):
         for branch in self.friends_branch:
 
             try:
-                log=self.git.log(branch.strip(),format="oneline")
+                git_log=self.git.log(branch.strip(),format="oneline")
             except GitCommandError as e:
                 logging.error(e)
-                log=""
-            if (log != ""):
-                Hi=set(log.split('\n'))
+                git_log=""
+            if git_log != "":
+                Hi=set(git_log.split('\n'))
                 #######################################################
                 jesaispas[branch]=len(Hi)
                 print "ajout"
                 print len(Hi)
-                sumHi=sumHi+len(Hi)
+                sumHi += len(Hi)
                 Hmax=Hmax|Hi
                 #################################################################
         print "debut"
-        i=0
         for branch in self.friends_branch:
             print branch
             print self.mes_amis[branch]
@@ -138,13 +136,16 @@ class Application(tk.Frame):
 
         self.controlVarDelta.set(len(Hmax)-len(H1))
 
+def main():
+    app = DivaWidget()
+    screen_width = app.winfo_screenwidth()
+    screen_height = app.winfo_screenheight()
+    Xpos = str(screen_width-150)
+    app.master.title('diva')
+    app.master.geometry('500x500+'+Xpos+'+50')
+    #app.master.overrideredirect(app.always_ontop)
+    app.master.wm_iconbitmap(bitmap = "@diva.xbm")
+    app.mainloop()
 
-app = Application() 
-screen_width = app.winfo_screenwidth()
-screen_height = app.winfo_screenheight() 
-Xpos = str(screen_width-150)
-app.master.title('diva')
-app.master.geometry('500x500+'+Xpos+'+50')
-#app.master.overrideredirect(app.always_ontop)
-app.master.wm_iconbitmap(bitmap = "@diva.xbm")
-app.mainloop()
+if __name__ == "__main__":
+    main()
