@@ -10,23 +10,18 @@ logging.basicConfig(level=logging.DEBUG, format='%(levelname)s:%(asctime)s:%(mes
 
 class DivaWidget(tk.Frame):
     
-    def __init__(self, master=None):
-        tk.Frame.__init__(self, master)   
+    def __init__(self, listBranch=None, my_repo=None, my_branch=None, master=None):
+        tk.Frame.__init__(self, master)
         self.read_conf()
-        self.init_git()
-        self.run_thread()
-        self.grid()
-        self.createWidgets()
-        self.master.protocol("WM_DELETE_WINDOW", self.quitAction)
-    
-    def read_conf(self):
-        config = ConfigParser.RawConfigParser()
-        config.read('diva.cfg')
-        self.my_repo=config.get("git","my_repo")
-        self.my_branch=config.get("git","my_branch")
 
-        self.friends_branch=config.get("git","friends_branch")
-        self.friends_branch=self.friends_branch.split(" ")
+        if not my_repo is None:
+            self.my_repo = my_repo
+
+        if not my_branch is None:
+            self.my_branch = my_branch
+
+        if not listBranch is None:
+            self.friends_branch = listBranch
 
         ##############################################################
         self.mes_amis = {}
@@ -35,6 +30,22 @@ class DivaWidget(tk.Frame):
             temp.set(0)
             self.mes_amis[branch] = temp
         ##############################################################
+
+    def launch(self):
+        self.init_git()
+        self.run_thread()
+        self.grid()
+        self.createWidgets()
+        self.master.protocol("WM_DELETE_WINDOW", self.quitAction)
+
+    def read_conf(self):
+        config = ConfigParser.RawConfigParser()
+        config.read('diva.cfg')
+        self.my_repo=config.get("git","my_repo")
+        self.my_branch=config.get("git","my_branch")
+
+        self.friends_branch=config.get("git","friends_branch")
+        self.friends_branch=self.friends_branch.split(" ")
 
         self.refresh_rate=int(config.get("diva","refresh_rate"))
         self.sync_limit=int(config.get("diva","sync_limit"))
@@ -136,8 +147,10 @@ class DivaWidget(tk.Frame):
 
         self.controlVarDelta.set(len(Hmax)-len(H1))
 
+
 def main():
     app = DivaWidget()
+    app.launch()
     screen_width = app.winfo_screenwidth()
     screen_height = app.winfo_screenheight()
     Xpos = str(screen_width-150)

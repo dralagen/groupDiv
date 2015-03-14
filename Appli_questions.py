@@ -308,8 +308,13 @@ class Questionaire(Frame):
         self.createWidgetsInUE()
         self.createWidgetsInReview()
 
-        diva_root = Tix.Tk()
-        self.diva = diva.DivaWidget(master=diva_root)
+        branchUsr = []
+        for branch in self.liste_usr:
+            branchUsr.append(branch+"/master")
+
+        diva_root = Tix.Toplevel(master)
+        self.diva = diva.DivaWidget(listBranch=branchUsr, master=diva_root)
+        self.diva.launch()
         screen_width = self.diva.winfo_screenwidth()
         screen_height = self.diva.winfo_screenheight()
         Xpos = str(screen_width-150)
