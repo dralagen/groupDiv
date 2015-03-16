@@ -150,7 +150,7 @@ class DivaWidget(tk.Frame):
 	######################Affichage des Xwing########################
 	#################################################################
         self.canvasAnimation = tk.Canvas(self, width = 200, height = 250)
-        self.placerXwing()
+        self.placerXwing(50)
         self.canvasAnimation.grid(column=0, row = z)
 
     def quitAction(self):
