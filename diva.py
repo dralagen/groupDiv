@@ -34,7 +34,7 @@ class DivaWidget(tk.Frame):
         
         ############################################################
     def myfunction(self, event):
-    	self.ca.configure(scrollregion=self.ca.bbox("all"),width=200,height=200)
+    	self.canvasDistances.configure(scrollregion=self.canvasDistances.bbox("all"),width=200,height=200)
     	###############################################################
     	
     def placerXwing(self):
@@ -122,7 +122,7 @@ class DivaWidget(tk.Frame):
 	self.frameDistances.grid(column = 0, row = 2, columnspan=8)
 	
 	self.canvasDistances = tk.Canvas(self.frameDistances)
-	self.frameCanvasDistance = tk.Frame(self.ca)
+	self.frameCanvasDistance = tk.Frame(self.canvasDistances)
 	
 	self.scrollbarDistances = tk.Scrollbar(self.frameDistances, orient="vertical", command=self.canvasDistances.yview)
 	self.canvasDistances.configure(yscrollcommand=self.scrollbarDistances.set)
