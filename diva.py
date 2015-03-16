@@ -6,8 +6,6 @@ import logging
 
 from git import *
 
-logging.basicConfig(level=logging.DEBUG, format='%(levelname)s:%(asctime)s:%(message)s')
-
 class DivaWidget(tk.Frame):
     
     def __init__(self, listBranch=None, my_repo=None, my_branch=None, master=None):
@@ -63,9 +61,19 @@ class DivaWidget(tk.Frame):
 
     def threadUpdateRepo(self):
         while not self.update_stop.is_set():
-          self.git.remote("update")
-          self.calculateGDtot()
-          self.update_stop.wait(self.refresh_rate)
+            self.git.remote("update")
+            self.calculateGDtot()
+
+            if logging.getLogger().getEffectiveLevel() == logging.INFO \
+                    or logging.getLogger().getEffectiveLevel() == logging.DEBUG:
+                logUsr=[]
+                for branch, value in self.mes_amis.iteritems():
+                    logUsr.append(str(branch)+"="+str(value.get()))
+
+                logging.info("GDtot="+str(self.controlVarGDtot.get())+";"+
+                             "delta="+str(self.controlVarDelta.get())+";"+
+                             ";".join(logUsr))
+            self.update_stop.wait(self.refresh_rate)
         pass
     
     def createWidgets(self):    
@@ -118,7 +126,7 @@ class DivaWidget(tk.Frame):
             H1=set(H1.split('\n'))
 
         sumHi=len(H1)
-        Hmax=H1
+        Hmax=set(H1)
         jesaispas = {}
         for branch in self.friends_branch:
 
@@ -131,16 +139,10 @@ class DivaWidget(tk.Frame):
                 Hi=set(git_log.split('\n'))
                 #######################################################
                 jesaispas[branch]=len(Hi)
-                print "ajout"
-                print len(Hi)
                 sumHi += len(Hi)
                 Hmax=Hmax|Hi
                 #################################################################
-        print "debut"
         for branch in self.friends_branch:
-            print branch
-            print self.mes_amis[branch]
-            print jesaispas[branch]
             self.mes_amis[branch].set(len(Hmax)-jesaispas[branch])
 
         self.controlVarGDtot.set((len(self.friends_branch)+1)*len(Hmax)-sumHi)
@@ -156,7 +158,7 @@ def main():
     Xpos = str(screen_width-150)
     app.master.title('diva')
     app.master.geometry('500x500+'+Xpos+'+50')
-    #app.master.overrideredirect(app.always_ontop)
+    app.master.overrideredirect(app.always_ontop)
     app.master.wm_iconbitmap(bitmap = "@diva.xbm")
     app.mainloop()
 

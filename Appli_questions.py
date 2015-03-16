@@ -122,8 +122,8 @@ class Questionaire(Frame):
     # le parametre usr sert a connaitre quel bouton est utilise
     def pull_un_usr(self, usr):
         try:
-            self.repo.git.execute(["git", "pull", usr, "master"])
-            logging.info("pull from " + usr)
+            executeResult = self.repo.git.execute(["git", "pull", usr, "master"])
+            logging.info("pull from " + usr + ": " + executeResult.replace("\n", ";"))
         except GitCommandError as e:
             logging.error(e)
 
