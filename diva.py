@@ -112,7 +112,7 @@ class DivaWidget(tk.Frame):
         self.GDtotLabel.grid(column=8,row=0,sticky='W',padx=2,pady=2)
 
         self.Label2 = tk.Label(self, text="Distance=")
-        self.Label2.grid(column=0,row=2, columnspan="7",sticky='WE',padx=2,pady=2)
+        self.Label2.grid(column=0,row=1, columnspan="7",sticky='WE',padx=2,pady=2)
         self.DeltaLabel = tk.Label(self, textvariable=self.controlVarDelta)
         self.DeltaLabel.grid(column=8,row=1,sticky='W',padx=2,pady=2)
 ###############################################################
