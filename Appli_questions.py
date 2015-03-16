@@ -72,8 +72,6 @@ class Questionaire(Frame):
         nom_fichier = "texte_" + self.mon_ue + ".txt"
         oldContent = self.get_file_content(nom_fichier).strip()
         newContent = self.texte_mon_ue.get(1.0, END).encode("UTF-8").strip()
-        logging.debug("old content : " + oldContent)
-        logging.debug("new content : " + newContent)
         if oldContent == newContent:
             return
 
@@ -82,8 +80,8 @@ class Questionaire(Frame):
         fichier.close()
 
         self.repo.index.add([nom_fichier])
-        self.repo.index.commit("update ue " + self.mon_ue)
-        logging.info("commit update ue")
+        hashCommit = self.repo.index.commit("update ue " + self.mon_ue)
+        logging.info("commit update ue :" + str(hashCommit))
 
     def charger_texte(self, nom_ue):
         return self.get_file_content("texte_" + nom_ue + ".txt")
@@ -115,8 +113,8 @@ class Questionaire(Frame):
         # commit change
 
         self.repo.index.add([nom_fichier], False)
-        self.repo.index.commit("add review by " + self.nom_usr)
-        logging.info("commit new review")
+        hashCommit = self.repo.index.commit("add review by " + self.nom_usr)
+        logging.info("commit new review :"+str(hashCommit))
 
     # pour pull un usr, cette methode est utilisee par les sept boutons de pull,
     # le parametre usr sert a connaitre quel bouton est utilise
