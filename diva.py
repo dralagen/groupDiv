@@ -136,8 +136,8 @@ class DivaWidget(tk.Frame):
         incr = 0
 
         for i, j in sorted(self.mes_amis.iteritems()):
-            tk.Label(self.frameCanvasDistance, text=i).grid(row=i,column=0)
-            tk.Label(self.frameCanvasDistance,textvariable = j).grid(column=1, row=i)
+            tk.Label(self.frameCanvasDistance, text=i).grid(row=incr,column=0)
+            tk.Label(self.frameCanvasDistance,textvariable = j).grid(column=1, row=incr)
             incr += 1
             
 	##########################################
