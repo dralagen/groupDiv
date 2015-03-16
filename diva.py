@@ -133,12 +133,12 @@ class DivaWidget(tk.Frame):
         self.frameCanvasDistance.bind("<Configure>", self.myfunction)
 
         z = 3
-        i = 0
+        incr = 0
 
         for i, j in sorted(self.mes_amis.iteritems()):
             tk.Label(self.frameCanvasDistance, text=i).grid(row=i,column=0)
             tk.Label(self.frameCanvasDistance,textvariable = j).grid(column=1, row=i)
-            i += 1
+            incr += 1
             
 	##########################################
         self.quitButton = tk.Button(self, text='Quit', command=self.quitAction)            
