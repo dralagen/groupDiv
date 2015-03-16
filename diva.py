@@ -48,7 +48,7 @@ class DivaWidget(tk.Frame):
             if i >60:
                 self.canvasAnimation.create_image(k + self.photoXwing.width()/2 + j, 5*60 + self.photoXwing.height()/2, image = self.photoXwing)
             else:
-                self.canvasAnimation.create_image(k + self.photoXwing.width()/2 + j, 5*i + self.photoXwing.height()/2, image = self.photoXwing)
+                self.canvasAnimation.create_image(k + self.photoXwing.width()/2 + j, 250 - 5*i + self.photoXwing.height()/2, image = self.photoXwing)
             k = (k+40)%120
     	
     def launch(self):
