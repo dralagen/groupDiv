@@ -24,15 +24,37 @@ class DivaWidget(tk.Frame):
             self.friends_branch = listBranch
 
         ##############################################################
+        self.toutesLesDistances = []
         self.mes_amis = {}
         for branch in sorted(self.friends_branch):
+            self.toutesLesDistances.append(0)
             temp=tk.IntVar()
             temp.set(0)
             self.mes_amis[branch] = temp
+            
         ##############################################################
-
+        
+        ############################################################
+    def myfunction(self, event):
+    	self.ca.configure(scrollregion=self.ca.bbox("all"),width=200,height=200)
+    	###############################################################
+    	
+    def placerXwing(self):
+    	self.photoXwing = tk.PhotoImage(file = "xwing.gif")
+    	#self.photoEdlm = tk.PhotoImage(file = "xwing.gif")
+    	j = 1
+    	k = 0
+    	for i in sorted(self.toutesLesDistances):
+    		if k == 0:
+    			j = -j
+    		if i >60:
+    			self.canvasAnimation.create_image(k + self.photo.width()/2 + j, 5*60 + self.photo.height()/2, image = self.photo)
+    		else:
+    			self.canvasAnimation.create_image(k + self.photo.width()/2 + j, 5*i + self.photo.height()/2, image = self.photo)
+    		k = (k+40)%120
+    	
     def launch(self):
-        self.init_git()
+    	self.init_git()
         self.run_thread()
         self.grid()
         self.createWidgets()
@@ -80,27 +102,47 @@ class DivaWidget(tk.Frame):
         self.Label1.grid(column=0,row=0, columnspan="7", sticky='WE',padx=2,pady=2)
         self.GDtotLabel = tk.Label(self, textvariable=self.controlVarGDtot)
         self.GDtotLabel.grid(column=8,row=0,sticky='W',padx=2,pady=2)
-#########################################
-        z = 4
-        mes_h={}
-        for i, j in sorted(self.mes_amis.iteritems()):
-            self.Label22 = tk.Label(self, text=i)
-            self.Label22.grid(column=0,row=z, columnspan="7",sticky='WE',padx=2,pady=2)
-            mes_h[i] = tk.Label(self, textvariable=self.mes_amis[i])
-            mes_h[i].grid(column=8,row=z,sticky='W',padx=2,pady=2)
-            z += 1
-
-
-##########################################
         
         self.Label2 = tk.Label(self, text="Distance=")
         self.Label2.grid(column=0,row=2, columnspan="7",sticky='WE',padx=2,pady=2)
         self.DeltaLabel = tk.Label(self, textvariable=self.controlVarDelta)
-        self.DeltaLabel.grid(column=8,row=2,sticky='W',padx=2,pady=2)
-        
+        self.DeltaLabel.grid(column=8,row=1,sticky='W',padx=2,pady=2)
+###############################################################
+############Affichage de toutes les distances##################
+###############################################################
+	self.frameDistances = tk.Frame(self, relief = tk.GROOVE, width = 40, height = 50, bd = 1)
+	self.frameDistances.grid(column = 0, row = 2, columnspan=8)
+	
+	self.canvasDistances = tk.Canvas(self.frameDistances)
+	self.frameCanvasDistance = tk.Frame(self.ca)
+	
+	self.scrollbarDistances = tk.Scrollbar(self.frameDistances, orient="vertical", command=self.canvasDistances.yview)
+	self.canvasDistances.configure(yscrollcommand=self.scrollbarDistances.set)
+	
+	self.scrollbarDistances.pack(side="right",fill="y")
+	self.canvasDistances.pack(side="left")
+	self.canvasDistances.create_window((0,0), window=self.frameCanvasDistance, anchor='nw')
+	self.frameCanvasDistance.bind("<Configure>", self.myfunction)
+	
+	z = 3
+        i = 0
+
+        for i, j in sorted(self.mes_amis.iteritems()):
+            tk.Label(self.frameCanvasDistance, text=i).grid(row=i,column=0)
+            tk.Label(self.f,textvariable = j).grid(column=1, row=i)
+            i += 1
+            
+	##########################################
         self.quitButton = tk.Button(self, text='Quit', command=self.quitAction)            
         self.quitButton.grid(sticky='WE',columnspan=8,row=z, padx=5,pady=5)
         z += 1
+        
+	#################################################################
+	######################Affichage des Xwing########################
+	#################################################################
+	self.canvasAnimation = tk.Canvas(self, width = 200, height = 250)
+	self.placerXwing()
+	self.canvasAnimation.grid(column=0, row = z)
 
     def quitAction(self):
       self.update_stop.set()
@@ -119,7 +161,8 @@ class DivaWidget(tk.Frame):
 
         sumHi=len(H1)
         Hmax=H1
-        jesaispas = {}
+        distancesAmis = {}
+        
         for branch in self.friends_branch:
 
             try:
@@ -130,19 +173,17 @@ class DivaWidget(tk.Frame):
             if git_log != "":
                 Hi=set(git_log.split('\n'))
                 #######################################################
-                jesaispas[branch]=len(Hi)
-                print "ajout"
-                print len(Hi)
+                distancesAmis[branch]=len(Hi)
                 sumHi += len(Hi)
                 Hmax=Hmax|Hi
                 #################################################################
-        print "debut"
+        self.toutesLesDistances = []
         for branch in self.friends_branch:
-            print branch
-            print self.mes_amis[branch]
-            print jesaispas[branch]
-            self.mes_amis[branch].set(len(Hmax)-jesaispas[branch])
-
+            self.toutesLesDistances.append(len(Hmax)-distancesAmis[branch])
+            self.mes_amis[branch].set(len(Hmax)-distancesAmis[branch])
+        self.placerXwing()
+        
+        self.placerXwing()
         self.controlVarGDtot.set((len(self.friends_branch)+1)*len(Hmax)-sumHi)
 
         self.controlVarDelta.set(len(Hmax)-len(H1))
