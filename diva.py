@@ -37,19 +37,20 @@ class DivaWidget(tk.Frame):
         self.canvasDistances.configure(scrollregion=self.canvasDistances.bbox("all"),width=200,height=200)
         ###############################################################
 
-    def placerXwing(self):
+    def placerXwing(self, yedlm):
         self.photoXwing = tk.PhotoImage(file = "xwing.gif")
-        #self.photoEdlm = tk.PhotoImage(file = "xwing.gif")
+        self.photoEdlm = tk.PhotoImage(file = "edlm.gif")
         j = 1
         k = 0
         for i in sorted(self.toutesLesDistances):
             if k == 0:
                 j = -j
             if i >60:
-                self.canvasAnimation.create_image(k + self.photoXwing.width()/2 + j, 5*60 + self.photoXwing.height()/2, image = self.photoXwing)
+                self.canvasAnimation.create_image(k + self.photoXwing.width()/2 + j,yedlm - 5*60 + self.photoXwing.height()/2, image = self.photoXwing)
             else:
-                self.canvasAnimation.create_image(k + self.photoXwing.width()/2 + j, 250 - 5*i + self.photoXwing.height()/2, image = self.photoXwing)
+                self.canvasAnimation.create_image(k + self.photoXwing.width()/2 + j, yedlm - 5*i + self.photoXwing.height()/2, image = self.photoXwing)
             k = (k+40)%120
+        self.canvasAnimation.create_image(self.photoEdlm.width()/2, yedlm + self.photoEdlm.height()/2, image = self.photoEdlm)
     	
     def launch(self):
         self.init_git()
@@ -191,7 +192,7 @@ class DivaWidget(tk.Frame):
             self.toutesLesDistances.append(len(Hmax)-distancesAmis[branch])
             self.mes_amis[branch].set(len(Hmax)-distancesAmis[branch])
         
-        self.placerXwing()
+        self.placerXwing((len(self.friends_branch)+1)*len(Hmax)-sumHi)
 
         self.controlVarGDtot.set((len(self.friends_branch)+1)*len(Hmax)-sumHi)
 
