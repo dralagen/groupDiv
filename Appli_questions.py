@@ -11,8 +11,11 @@ from git import GitCommandError, Repo
 from gitdb import GitDB
 import diva
 
-
-logging.basicConfig(level=logging.INFO, format='%(levelname)s:%(asctime)s:%(message)s')
+logDirectory = os.environ["HOME"]+"/.groupDiv"
+if not os.path.exists(logDirectory):
+    os.mkdir(logDirectory)
+logPath = logDirectory+"/"+socket.gethostname()+".log"
+logging.basicConfig(filename=logPath,level=logging.INFO, format='%(levelname)s:%(asctime)s:%(message)s')
 
 # On part du principe que tous les fichier de review et sur les ue existent deja
 class Questionaire(Frame):
