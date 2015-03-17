@@ -7,7 +7,7 @@ import logging
 from git import *
 
 class DivaWidget(tk.Frame):
-    
+
     def __init__(self, listBranch=None, my_repo=None, my_branch=None, master=None):
         tk.Frame.__init__(self, master)
         self.read_conf()
@@ -27,9 +27,9 @@ class DivaWidget(tk.Frame):
             temp=tk.IntVar()
             temp.set(0)
             self.mes_amis[branch] = temp
-            
+
         ##############################################################
-        
+
         ############################################################
     def myfunction(self, event):
         self.canvasDistances.configure(scrollregion=self.canvasDistances.bbox("all"),width=200,height=200)
@@ -48,7 +48,7 @@ class DivaWidget(tk.Frame):
             else:
                 self.canvasAnimation.create_image(k + self.photoXwing.width()/2 + j, yedlm - 5*i.get() + self.photoXwing.height()/2, image = self.photoXwing)
             k = (k+40)%120
-        self.canvasAnimation.create_image(self.photoEdlm.width()/2, yedlm + self.photoEdlm.height()/2, image = self.photoEdlm)
+        self.canvasAnimation.create_image(self.photoEdlm.width()/2+50, yedlm + self.photoEdlm.height()/2, image = self.photoEdlm)
 
     def launch(self):
         self.init_git()
@@ -69,7 +69,7 @@ class DivaWidget(tk.Frame):
         self.refresh_rate=int(config.get("diva","refresh_rate"))
         self.sync_limit=int(config.get("diva","sync_limit"))
         self.always_ontop=int(config.get("diva","always_ontop"))
-      
+
     def init_git(self):
         repo = Repo(self.my_repo, odbt=GitDB)
         assert repo.bare ==False
@@ -86,12 +86,13 @@ class DivaWidget(tk.Frame):
                 self.git.remote("update")
                 self.calculateGDtot()
             except GitCommandError as e:
-                logging.error(e)
+                logging.debug(e)
+                pass
 
             self.update_stop.wait(self.refresh_rate)
         pass
-    
-    def createWidgets(self):    
+
+    def createWidgets(self):
         self.controlVarGDtot=tk.IntVar()
 
         self.h1=tk.IntVar()
@@ -132,17 +133,17 @@ class DivaWidget(tk.Frame):
             tk.Label(self.frameCanvasDistance, text=i).grid(row=incr,column=0)
             tk.Label(self.frameCanvasDistance,textvariable = j).grid(column=1, row=incr)
             incr += 1
-            
+
     ##########################################
-        self.quitButton = tk.Button(self, text='Quit', command=self.quitAction)            
+        self.quitButton = tk.Button(self, text='Quit', command=self.quitAction)
         self.quitButton.grid(sticky='WE',columnspan=8,row=z, padx=5,pady=5)
         z += 1
-        
+
     #################################################################
     ######################Affichage des Xwing########################
     #################################################################
-        self.canvasAnimation = tk.Canvas(self, width = 200, height = 250)
-        self.placerXwing(50)
+        self.canvasAnimation = tk.Canvas(self, width = 150, height = 300)
+        self.placerXwing(0)
         self.canvasAnimation.grid(column=0, row = z)
 
     def quitAction(self):
@@ -161,31 +162,32 @@ class DivaWidget(tk.Frame):
             H1=set(H1.split('\n'))
 
         sumHi=len(H1)
-        
+
         Hmax=set(H1)
         distancesAmis = {}
 
         for branch in self.friends_branch:
-
             try:
                 git_log=self.git.log(branch.strip(),format="oneline")
+                if git_log != "":
+                    Hi=set(git_log.split('\n'))
+                    #######################################################
+                    distancesAmis[branch]=len(Hi)
+                    sumHi += len(Hi)
+                    Hmax=Hmax|Hi
+                    #################################################################
             except GitCommandError as e:
-                logging.error(e)
-                git_log=""
-            if git_log != "":
-                Hi=set(git_log.split('\n'))
-                #######################################################
-                distancesAmis[branch]=len(Hi)
-                sumHi += len(Hi)
-                Hmax=Hmax|Hi
-                #################################################################
+                logging.debug(e)
+                distancesAmis[branch] = 0
+
         haveNewDistance = False
+
         for branch in self.friends_branch:
             newFriendDistance = len(Hmax)-distancesAmis[branch]
-            if self.mes_amis[branch] != newFriendDistance:
+            if self.mes_amis[branch].get() != newFriendDistance:
                 haveNewDistance = True
             self.mes_amis[branch].set(newFriendDistance)
-        
+
         self.placerXwing((len(self.friends_branch)+1)*len(Hmax)-sumHi)
 
         newGDtot = (len(self.friends_branch)+1)*len(Hmax)-sumHi
@@ -194,7 +196,7 @@ class DivaWidget(tk.Frame):
         self.controlVarGDtot.set(newGDtot)
 
         newDelta = len(Hmax)-len(H1)
-        if self.controlVarDelta != newDelta:
+        if self.controlVarDelta.get() != newDelta:
             haveNewDistance = True
 
         self.controlVarDelta.set(newDelta)
