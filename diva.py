@@ -22,10 +22,8 @@ class DivaWidget(tk.Frame):
             self.friends_branch = listBranch
 
         ##############################################################
-        self.toutesLesDistances = []
         self.mes_amis = {}
         for branch in sorted(self.friends_branch):
-            self.toutesLesDistances.append(0)
             temp=tk.IntVar()
             temp.set(0)
             self.mes_amis[branch] = temp
@@ -42,16 +40,16 @@ class DivaWidget(tk.Frame):
         self.photoEdlm = tk.PhotoImage(file = "edlm.gif")
         j = 1
         k = 0
-        for i in sorted(self.toutesLesDistances):
+        for i in sorted(self.mes_amis.values()):
             if k == 0:
                 j = -j
             if i >60:
                 self.canvasAnimation.create_image(k + self.photoXwing.width()/2 + j,yedlm - 5*60 + self.photoXwing.height()/2, image = self.photoXwing)
             else:
-                self.canvasAnimation.create_image(k + self.photoXwing.width()/2 + j, yedlm - 5*i + self.photoXwing.height()/2, image = self.photoXwing)
+                self.canvasAnimation.create_image(k + self.photoXwing.width()/2 + j, yedlm - 5*i.get() + self.photoXwing.height()/2, image = self.photoXwing)
             k = (k+40)%120
         self.canvasAnimation.create_image(self.photoEdlm.width()/2, yedlm + self.photoEdlm.height()/2, image = self.photoEdlm)
-    	
+
     def launch(self):
         self.init_git()
         self.run_thread()
@@ -84,18 +82,12 @@ class DivaWidget(tk.Frame):
 
     def threadUpdateRepo(self):
         while not self.update_stop.is_set():
-            self.git.remote("update")
-            self.calculateGDtot()
+            try:
+                self.git.remote("update")
+                self.calculateGDtot()
+            except GitCommandError as e:
+                logging.error(e)
 
-            if logging.getLogger().getEffectiveLevel() == logging.INFO \
-                    or logging.getLogger().getEffectiveLevel() == logging.DEBUG:
-                logUsr=[]
-                for branch, value in self.mes_amis.iteritems():
-                    logUsr.append(str(branch)+"="+str(value.get()))
-
-                logging.info("GDtot="+str(self.controlVarGDtot.get())+";"+
-                             "delta="+str(self.controlVarDelta.get())+";"+
-                             ";".join(logUsr))
             self.update_stop.wait(self.refresh_rate)
         pass
     
@@ -141,14 +133,14 @@ class DivaWidget(tk.Frame):
             tk.Label(self.frameCanvasDistance,textvariable = j).grid(column=1, row=incr)
             incr += 1
             
-	##########################################
+    ##########################################
         self.quitButton = tk.Button(self, text='Quit', command=self.quitAction)            
         self.quitButton.grid(sticky='WE',columnspan=8,row=z, padx=5,pady=5)
         z += 1
         
-	#################################################################
-	######################Affichage des Xwing########################
-	#################################################################
+    #################################################################
+    ######################Affichage des Xwing########################
+    #################################################################
         self.canvasAnimation = tk.Canvas(self, width = 200, height = 250)
         self.placerXwing(50)
         self.canvasAnimation.grid(column=0, row = z)
@@ -187,16 +179,36 @@ class DivaWidget(tk.Frame):
                 sumHi += len(Hi)
                 Hmax=Hmax|Hi
                 #################################################################
-        self.toutesLesDistances = []
+        haveNewDistance = False
         for branch in self.friends_branch:
-            self.toutesLesDistances.append(len(Hmax)-distancesAmis[branch])
-            self.mes_amis[branch].set(len(Hmax)-distancesAmis[branch])
+            newFriendDistance = len(Hmax)-distancesAmis[branch]
+            if self.mes_amis[branch] != newFriendDistance:
+                haveNewDistance = True
+            self.mes_amis[branch].set(newFriendDistance)
         
         self.placerXwing((len(self.friends_branch)+1)*len(Hmax)-sumHi)
 
-        self.controlVarGDtot.set((len(self.friends_branch)+1)*len(Hmax)-sumHi)
+        newGDtot = (len(self.friends_branch)+1)*len(Hmax)-sumHi
+        if self.controlVarGDtot.get() != newGDtot:
+            haveNewDistance = True
+        self.controlVarGDtot.set(newGDtot)
 
-        self.controlVarDelta.set(len(Hmax)-len(H1))
+        newDelta = len(Hmax)-len(H1)
+        if self.controlVarDelta != newDelta:
+            haveNewDistance = True
+
+        self.controlVarDelta.set(newDelta)
+
+        if haveNewDistance:
+            if logging.getLogger().getEffectiveLevel() == logging.INFO \
+                    or logging.getLogger().getEffectiveLevel() == logging.DEBUG:
+                logUsr=[]
+                for branch, value in self.mes_amis.iteritems():
+                    logUsr.append(str(branch)+"="+str(value.get()))
+
+                logging.info("GDtot="+str(self.controlVarGDtot.get())+";"+
+                     "delta="+str(self.controlVarDelta.get())+";"+
+                     ";".join(logUsr))
 
 
 def main():
