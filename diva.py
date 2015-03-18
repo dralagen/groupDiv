@@ -32,23 +32,33 @@ class DivaWidget(tk.Frame):
 
         ############################################################
     def myfunction(self, event):
-        self.canvasDistances.configure(scrollregion=self.canvasDistances.bbox("all"),width=200,height=200)
+        self.canvasDistances.configure(scrollregion=self.canvasDistances.bbox("all"),width=140,height=100)
         ###############################################################
 
     def placerXwing(self, yedlm):
         self.photoXwing = tk.PhotoImage(file = "xwing.gif")
-        self.photoEdlm = tk.PhotoImage(file = "edlm.gif")
-        j = 1
+        self.photoXwingU = tk.PhotoImage(file = "xwingUSER.gif")
+	place = False
+	place_min = 300 - self.photoEdlm.height()-self.photoXwing.height()
+
+        j = 5
         k = 0
+
         for i in sorted(self.mes_amis.values()):
-            if k == 0:
-                j = -j
-            if i >60:
-                self.canvasAnimation.create_image(k + self.photoXwing.width()/2 + j,yedlm - 5*60 + self.photoXwing.height()/2, image = self.photoXwing)
-            else:
-                self.canvasAnimation.create_image(k + self.photoXwing.width()/2 + j, yedlm - 5*i.get() + self.photoXwing.height()/2, image = self.photoXwing)
-            k = (k+40)%120
-        self.canvasAnimation.create_image(self.photoEdlm.width()/2+50, yedlm + self.photoEdlm.height()/2, image = self.photoEdlm)
+		if k == 0:
+                	j = j+5
+			if j == 10:
+				j = -5
+
+		if self.controlVarDelta.get() < i.get() and (not(self.controlVarDelta.get() >= i.get()) and place==False):
+			self.canvasAnimation.create_image(20+k + self.photoXwingU.width()/2 + j, place_min - self.controlVarDelta.get()+ self.photoXwing.height()/2, image = self.photoXwingU)
+			place = True
+			k = (k+40)%120
+               	self.canvasAnimation.create_image(20+k + self.photoXwing.width()/2 + j, place_min - (place_min*i.get())/self.echelle + self.photoXwing.height()/2, image = self.photoXwing)
+            	k = (k+40)%120
+	if(not(place)):
+		self.canvasAnimation.create_image(20+k + self.photoXwingU.width()/2 + j, 300 - self.photoEdlm.height() - self.photoXwingU.height()/2 - i.get(), image = self.photoXwingU)
+
 
     def launch(self):
         self.init_git()
@@ -101,22 +111,22 @@ class DivaWidget(tk.Frame):
         self.controlVarState=tk.StringVar()
 
         self.Label1 = tk.Label(self, text="GDtot=")
-        self.Label1.grid(column=0,row=0, columnspan="7", sticky='WE',padx=2,pady=2)
+        self.Label1.grid(column=0,row=0, sticky='WE',padx=2,pady=2)
         self.GDtotLabel = tk.Label(self, textvariable=self.controlVarGDtot)
-        self.GDtotLabel.grid(column=8,row=0,sticky='W',padx=2,pady=2)
+        self.GDtotLabel.grid(column=1,row=0,sticky='W',padx=2,pady=2)
 
         self.Label2 = tk.Label(self, text="Distance=")
-        self.Label2.grid(column=0,row=1, columnspan="7",sticky='WE',padx=2,pady=2)
+        self.Label2.grid(column=0,row=1, sticky='WE',padx=2,pady=2)
         self.DeltaLabel = tk.Label(self, textvariable=self.controlVarDelta)
-        self.DeltaLabel.grid(column=8,row=1,sticky='W',padx=2,pady=2)
+        self.DeltaLabel.grid(column=1,row=1,sticky='W',padx=2,pady=2)
 ###############################################################
 ############Affichage de toutes les distances##################
 ###############################################################
-        self.frameDistances = tk.Frame(self, relief = tk.GROOVE, width = 40, height = 50, bd = 1)
-        self.frameDistances.grid(column = 0, row = 2, columnspan=8)
+        self.frameDistances = tk.Frame(self, relief = tk.GROOVE, width = 30, height = 30, bd = 1)
+        self.frameDistances.grid(column = 0, row = 2, columnspan=2)
 
-        self.canvasDistances = tk.Canvas(self.frameDistances)
-        self.frameCanvasDistance = tk.Frame(self.canvasDistances)
+        self.canvasDistances = tk.Canvas(self.frameDistances, width = 50)
+        self.frameCanvasDistance = tk.Frame(self.canvasDistances,  width = 50)
 
         self.scrollbarDistances = tk.Scrollbar(self.frameDistances, orient="vertical", command=self.canvasDistances.yview)
         self.canvasDistances.configure(yscrollcommand=self.scrollbarDistances.set)
@@ -134,17 +144,16 @@ class DivaWidget(tk.Frame):
             tk.Label(self.frameCanvasDistance,textvariable = j).grid(column=1, row=incr)
             incr += 1
 
-    ##########################################
-        self.quitButton = tk.Button(self, text='Quit', command=self.quitAction)
-        self.quitButton.grid(sticky='WE',columnspan=8,row=z, padx=5,pady=5)
-        z += 1
-
     #################################################################
     ######################Affichage des Xwing########################
     #################################################################
         self.canvasAnimation = tk.Canvas(self, width = 150, height = 300)
+	self.echelle = 20
+        self.photoXwing = tk.PhotoImage(file = "xwing.gif")
+        self.photoEdlm = tk.PhotoImage(file = "edlm.gif")
+        self.canvasAnimation.create_image(self.photoEdlm.width()/2+50, 300 - self.photoEdlm.height()/2, image = self.photoEdlm)
         self.placerXwing(0)
-        self.canvasAnimation.grid(column=0, row = z)
+        self.canvasAnimation.grid(column=0, row = z, columnspan=2)
 
     def quitAction(self):
         self.update_stop.set()
@@ -179,6 +188,10 @@ class DivaWidget(tk.Frame):
             except GitCommandError as e:
                 logging.debug(e)
                 distancesAmis[branch] = 0
+	if len(Hmax)>20:
+		self.echelle = len(Hmax)
+	else:
+		self.echelle = 20
 
         haveNewDistance = False
 
@@ -218,9 +231,9 @@ def main():
     app.launch()
     screen_width = app.winfo_screenwidth()
     screen_height = app.winfo_screenheight()
-    Xpos = str(screen_width-150)
+    Xpos = str(screen_width-160)
     app.master.title('diva')
-    app.master.geometry('500x500+'+Xpos+'+50')
+    app.master.geometry('170x460+'+Xpos+'+50')
     app.master.overrideredirect(app.always_ontop)
     app.master.wm_iconbitmap(bitmap = "@diva.xbm")
     app.mainloop()

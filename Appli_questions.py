@@ -318,9 +318,10 @@ class Questionaire(Frame):
         self.diva.launch()
         screen_width = self.diva.winfo_screenwidth()
         screen_height = self.diva.winfo_screenheight()
-        Xpos = str(screen_width-150)
+        Xpos = str(screen_width-160)
         self.diva.master.title('diva')
-        self.diva.master.geometry('500x500+'+Xpos+'+50')
+        self.diva.master.geometry('170x460+'+Xpos+'+50')
+	self.diva.master.overrideredirect(self.diva.always_ontop)
         #self.diva.master.overrideredirect(self.diva.always_ontop)
         self.diva.master.wm_iconbitmap(bitmap = "@diva.xbm")
 
