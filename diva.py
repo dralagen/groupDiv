@@ -8,7 +8,7 @@ from git import *
 
 class DivaWidget(tk.Frame):
 
-    def __init__(self, listBranch=None, my_repo=None, my_branch=None, master=None):
+    def __init__(self, friends_branch=None, my_repo=None, my_branch=None, master=None):
         tk.Frame.__init__(self, master)
         self.read_conf()
 
@@ -18,8 +18,8 @@ class DivaWidget(tk.Frame):
         if not my_branch is None:
             self.my_branch = my_branch
 
-        if not listBranch is None:
-            self.friends_branch = listBranch
+        if not friends_branch is None:
+            self.friends_branch = friends_branch
 
         ##############################################################
         self.mes_amis = {}
