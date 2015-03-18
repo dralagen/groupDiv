@@ -155,23 +155,25 @@ class Questionaire(Frame):
 
 
     def createTabs(self, master):
+
+
         # definition des onglets
-        self.notebook = Tix.NoteBook(master, width=630)
+        self.notebook = Tix.NoteBook(master, width=660)
         self.notebook.add("ue", label="UE")
         self.notebook.add("review", label="Review")
-        self.notebook.grid(column=0, row=0)
+        self.notebook.grid(column=0, row=1, columnspan = 8)
 
         # onglet ue
         self.ue = self.notebook.subwidget_list["ue"]
         #contient tous les widget de l'onglet question
         self.onglet_ue = Frame(self.ue)
-        self.onglet_ue.grid(column=0, row=0)
+        self.onglet_ue.grid(column=0, row=1)
 
         #onglet review
         self.review = self.notebook.subwidget_list["review"]
         #contient tous les widget de l'onglet commentaire
         self.onglet_review = Frame(self.review)
-        self.onglet_review.grid(column=0, row=0)
+        self.onglet_review.grid(column=0, row=1)
 
     def createWidgetsInUE(self):
 
@@ -183,7 +185,9 @@ class Questionaire(Frame):
 
         # scroll barre pour la zone de texte editable + zone de texte editable pour l'ue
         self.scroll_texte_mon_ue_V = Scrollbar(self.onglet_ue, orient=VERTICAL)
-        self.texte_mon_ue = Text(self.onglet_ue, width=75, height=20, wrap=WORD)
+        self.texte_mon_ue = Text(self.onglet_ue, width=80, height=20, wrap=WORD)
+	test = "Pre-requis:\n\n\n\nCompetences acquises:\n\n\n\nProgramme:\n\n\n\nAmeliorations a apporter:\n\n\n\n"
+	self.texte_mon_ue.insert(END, test)
         self.texte_mon_ue.config(yscrollcommand=self.scroll_texte_mon_ue_V.set, background="#FFFFFF", foreground="Black")
         self.texte_mon_ue.insert(END, self.charger_texte(self.mon_ue))
         self.scroll_texte_mon_ue_V.config(command=self.texte_mon_ue.yview)
@@ -194,23 +198,12 @@ class Questionaire(Frame):
         self.label_review_mon_ue = Label(self.onglet_ue, text="Les review de mon UE").grid(column=1, row=6,
                                                                                            columnspan=1)
         self.scroll_review_mon_ue_V = Scrollbar(self.onglet_ue, orient=VERTICAL)
-        self.review_mon_ue = Text(self.onglet_ue, width=75, height=20, wrap=WORD)
+        self.review_mon_ue = Text(self.onglet_ue, width=80, height=20, wrap=WORD)
         self.review_mon_ue.insert(END, self.string_review(self.mon_ue))
         self.review_mon_ue.config(state=DISABLED, yscrollcommand=self.scroll_review_mon_ue_V.set, background="#DBDBDB", foreground="Black")
         self.scroll_review_mon_ue_V.config(command=self.review_mon_ue.yview)
         self.scroll_review_mon_ue_V.grid(column=4, row=7, rowspan=8, sticky=S + N)
         self.review_mon_ue.grid(column=0, row=7, columnspan=3, rowspan=8)
-
-        #boutons de maj
-        self.label_maj_review_mon_ue = Label(self.onglet_ue, text="Maj de").grid(column=5, row=7, columnspan=1)
-
-        i = 0
-
-        for usr in sorted(self.liste_usr):
-            self.boutons_maj = Button(self.onglet_ue, text= self.config.get(usr,"name"), width=5, height=1,
-                                      command=lambda x=usr : self.pull_un_usr(x))
-            self.boutons_maj.grid(column=5, row= (8+i))
-            i += 1
 
     def createWidgetsInReview(self):
 
@@ -223,42 +216,32 @@ class Questionaire(Frame):
 
         self.choix_ue_a_review.pick(0)
 
-        self.choix_ue_a_review.grid(column=1, row=0, columnspan=2, sticky=W)
+        self.choix_ue_a_review.grid(column=1, row=0, columnspan=3, sticky=W)
 
         # affichage de la reponse dans une zone de texte non editable
-        self.label_reponse = Label(self.onglet_review, text="Reponse: ", font=30).grid(column=0, row=2)
+        self.label_reponse = Label(self.onglet_review, text="Texte: ", font=30).grid(column=0, row=2)
         self.scroll_reponse_ue_V = Scrollbar(self.onglet_review, orient=VERTICAL)
-        self.reponse_ue = Text(self.onglet_review, width=65, height=18, wrap=WORD)
+        self.reponse_ue = Text(self.onglet_review, width=78, height=18, wrap=WORD)
         self.reponse_ue.insert(END, self.charger_texte(self.choix_ue_a_review.entry.get()))
         self.reponse_ue.config(state=DISABLED, yscrollcommand=self.scroll_reponse_ue_V.set, background="#DBDBDB", foreground="Black")
 
         self.scroll_reponse_ue_V.config(command=self.reponse_ue.yview)
-        self.scroll_reponse_ue_V.grid(column=3, row=1, rowspan=3, sticky=S + N)
-        self.reponse_ue.grid(column=1, row=1, columnspan=2, rowspan=3, sticky=W)
+        self.scroll_reponse_ue_V.grid(column=4, row=1, rowspan=3, sticky=S + N)
+        self.reponse_ue.grid(column=1, row=1, columnspan=4, rowspan=3, sticky=W)
 
         #affichage des review dans une zone de texte non editable
         self.lable_review = Label(self.onglet_review, text="Review: ", font=30).grid(column=0, row=5)
         self.scroll_review_V = Scrollbar(self.onglet_review, orient=VERTICAL)
-        self.review = Text(self.onglet_review, width=65, height=20, wrap=WORD)
+        self.review = Text(self.onglet_review, width=78, height=20, wrap=WORD)
         self.review.insert(END, self.string_review(self.choix_ue_a_review.entry.get()))
         self.review.config(state=DISABLED, yscrollcommand=self.scroll_review_V.set, background="#DBDBDB", foreground="Black")
         self.scroll_review_V.config(command=self.review.yview)
-        self.scroll_review_V.grid(column=3, row=4, rowspan=4, sticky=S + N)
-        self.review.grid(column=1, row=4, columnspan=2, rowspan=4, sticky=W)
-
-        #bouton qui sert a faire un pull
-        self.lable_review = Label(self.onglet_review, text="MAJ de ", font=30).grid(column=4, row=0)
-
-        i = 1
-        for usr in sorted(self.liste_usr):
-            self.recuperer = Button(self.onglet_review, text= self.config.get(usr,"name"), width=5, height=1,
-                                    command=lambda x=usr : self.pull_un_usr(x))
-            self.recuperer.grid(column=4, row=i)
-            i += 1
+        self.scroll_review_V.grid(column=4, row=4, rowspan=4, sticky=S + N)
+        self.review.grid(column=1, row=4, columnspan=3, rowspan=4, sticky=W)
 
         #bouton pour poster un commentaire
         self.post = Button(self.onglet_review, text="Post", width=5, height=1, command=self.poster_commentaire)
-        self.post.grid(column=4, row=9)
+        self.post.grid(column=3, row=9)
 
         #zone de texte editable pour ecrire un commentaire
         self.label_mon_review = Label(self.onglet_review, text="Votre\nreview: ", font=30).grid(column=0, row=9)
@@ -308,6 +291,16 @@ class Questionaire(Frame):
         self.createTabs(master)
         self.createWidgetsInUE()
         self.createWidgetsInReview()
+        #bouton qui sert a faire un pull
+        self.lable_review = Label(master, text="Se mettre a jour avec:", font=12).grid(column=0, row=0)
+					        
+	i = 1
+
+        for usr in sorted(self.liste_usr):
+            self.boutons_maj = Button(master, text= self.config.get(usr,"name"), width=5, height=1,
+                                      command=lambda x=usr : self.pull_un_usr(x))
+            self.boutons_maj.grid(column=i, row= 0)
+            i += 1
 
         branchUsr = []
         for branch in self.liste_usr:
@@ -319,6 +312,7 @@ class Questionaire(Frame):
         screen_width = self.diva.winfo_screenwidth()
         screen_height = self.diva.winfo_screenheight()
         Xpos = str(screen_width-160)
+    	self.master.title(self.nom_usr +" " +self.mon_ue)
         self.diva.master.title('diva')
         self.diva.master.geometry('170x460+'+Xpos+'+50')
 	self.diva.master.overrideredirect(self.diva.always_ontop)

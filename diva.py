@@ -49,15 +49,14 @@ class DivaWidget(tk.Frame):
                 	j = j+5
 			if j == 10:
 				j = -5
-
 		if self.controlVarDelta.get() < i.get() and (not(self.controlVarDelta.get() >= i.get()) and place==False):
-			self.canvasAnimation.create_image(20+k + self.photoXwingU.width()/2 + j, place_min - self.controlVarDelta.get()+ self.photoXwing.height()/2, image = self.photoXwingU)
+			self.canvasAnimation.create_image(20+k + self.photoXwingU.width()/2 + j, place_min - (place_min*self.controlVarDelta.get())/self.echelle + self.photoXwingU.height()/2, image = self.photoXwingU)
 			place = True
 			k = (k+40)%120
                	self.canvasAnimation.create_image(20+k + self.photoXwing.width()/2 + j, place_min - (place_min*i.get())/self.echelle + self.photoXwing.height()/2, image = self.photoXwing)
             	k = (k+40)%120
 	if(not(place)):
-		self.canvasAnimation.create_image(20+k + self.photoXwingU.width()/2 + j, 300 - self.photoEdlm.height() - self.photoXwingU.height()/2 - i.get(), image = self.photoXwingU)
+		self.canvasAnimation.create_image(20+k + self.photoXwingU.width()/2 + j, place_min - (place_min*self.controlVarDelta.get())/self.echelle + self.photoXwingU.height()/2, image = self.photoXwingU)
 
 
     def launch(self):
@@ -174,13 +173,13 @@ class DivaWidget(tk.Frame):
 
         Hmax=set(H1)
         distancesAmis = {}
-
+	maxi = len(H1)
         for branch in self.friends_branch:
             try:
                 git_log=self.git.log(branch.strip(),format="oneline")
                 if git_log != "":
                     Hi=set(git_log.split('\n'))
-                    #######################################################
+ #######################################################
                     distancesAmis[branch]=len(Hi)
                     sumHi += len(Hi)
                     Hmax=Hmax|Hi
@@ -188,21 +187,22 @@ class DivaWidget(tk.Frame):
             except GitCommandError as e:
                 logging.debug(e)
                 distancesAmis[branch] = 0
-	if len(Hmax)>20:
-		self.echelle = len(Hmax)
-	else:
-		self.echelle = 20
 
         haveNewDistance = False
 
         for branch in self.friends_branch:
             newFriendDistance = len(Hmax)-distancesAmis[branch]
+
+            if newFriendDistance>self.echelle:
+            	self.echelle = newFriendDistance
+
             if self.mes_amis[branch].get() != newFriendDistance:
                 haveNewDistance = True
             self.mes_amis[branch].set(newFriendDistance)
 
         self.placerXwing((len(self.friends_branch)+1)*len(Hmax)-sumHi)
-
+	if maxi<20:
+		self.echelle = 20
         newGDtot = (len(self.friends_branch)+1)*len(Hmax)-sumHi
         if self.controlVarGDtot.get() != newGDtot:
             haveNewDistance = True
