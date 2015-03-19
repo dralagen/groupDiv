@@ -196,21 +196,20 @@ class DivaWidget(tk.Frame):
 
         self.controlVarDelta.set(newDelta)
         
-        self.echelle = newDelta
+        self.echelle = max(newDelta,20)
 
         for branch in self.friends_branch:
             newFriendDistance = len(Hmax)-distancesAmis[branch]
 
-            if newFriendDistance>self.echelle:
-                self.echelle = newFriendDistance
+            self.echelle = max(self.echelle, newFriendDistance)
 
             if self.mes_amis[branch].get() != newFriendDistance:
                 haveNewDistance = True
             self.mes_amis[branch].set(newFriendDistance)
 
+
         self.placerXwing((len(self.friends_branch)+1)*len(Hmax)-sumHi)
-        if self.echelle<20:
-            self.echelle = 20
+
         newGDtot = (len(self.friends_branch)+1)*len(Hmax)-sumHi
         if self.controlVarGDtot.get() != newGDtot:
             haveNewDistance = True
