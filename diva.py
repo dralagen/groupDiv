@@ -173,7 +173,9 @@ class DivaWidget(tk.Frame):
 
         Hmax=set(H1)
         distancesAmis = {}
-	self.echelle = len(H1)
+        
+
+		
         for branch in self.friends_branch:
             try:
                 git_log=self.git.log(branch.strip(),format="oneline")
@@ -189,6 +191,14 @@ class DivaWidget(tk.Frame):
                 distancesAmis[branch] = 0
 
         haveNewDistance = False
+        
+        newDelta = len(Hmax)-len(H1)
+        if self.controlVarDelta.get() != newDelta:
+            haveNewDistance = True
+
+        self.controlVarDelta.set(newDelta)
+        
+		self.echelle = newDelta
 
         for branch in self.friends_branch:
             newFriendDistance = len(Hmax)-distancesAmis[branch]
@@ -207,12 +217,6 @@ class DivaWidget(tk.Frame):
         if self.controlVarGDtot.get() != newGDtot:
             haveNewDistance = True
         self.controlVarGDtot.set(newGDtot)
-
-        newDelta = len(Hmax)-len(H1)
-        if self.controlVarDelta.get() != newDelta:
-            haveNewDistance = True
-
-        self.controlVarDelta.set(newDelta)
 
         if haveNewDistance:
             if logging.getLogger().getEffectiveLevel() == logging.INFO \
