@@ -25,8 +25,7 @@ class Questionaire(Frame):
         if os.path.isfile(file_path) and os.access(file_path, os.R_OK):
             fileStream = open(file_path, "r")
             for line in fileStream:
-                if line != "\n":
-                    content += line
+                content += line
             fileStream.close()
         return content
 
@@ -186,10 +185,11 @@ class Questionaire(Frame):
         # scroll barre pour la zone de texte editable + zone de texte editable pour l'ue
         self.scroll_texte_mon_ue_V = Scrollbar(self.onglet_ue, orient=VERTICAL)
         self.texte_mon_ue = Text(self.onglet_ue, width=80, height=20, wrap=WORD)
-	test = "Pre-requis:\n\n\n\nCompetences acquises:\n\n\n\nProgramme:\n\n\n\nAmeliorations a apporter:\n\n\n\n"
-	self.texte_mon_ue.insert(END, test)
+        init_text_ue = self.charger_texte(self.mon_ue)
+        if not init_text_ue:
+            init_text_ue = "Pre-requis:\n\n\n\nCompetences acquises:\n\n\n\nProgramme:\n\n\n\nAmeliorations a apporter:\n\n\n\n"
+        self.texte_mon_ue.insert(END, init_text_ue)
         self.texte_mon_ue.config(yscrollcommand=self.scroll_texte_mon_ue_V.set, background="#FFFFFF", foreground="Black")
-        self.texte_mon_ue.insert(END, self.charger_texte(self.mon_ue))
         self.scroll_texte_mon_ue_V.config(command=self.texte_mon_ue.yview)
         self.scroll_texte_mon_ue_V.grid(column=4, row=1, rowspan=5, sticky=S + N)
         self.texte_mon_ue.grid(column=0, row=1, columnspan=3, rowspan=5)
@@ -293,8 +293,8 @@ class Questionaire(Frame):
         self.createWidgetsInReview()
         #bouton qui sert a faire un pull
         self.lable_review = Label(master, text="Se mettre a jour avec:", font=12).grid(column=0, row=0)
-					        
-	i = 1
+
+        i = 1
 
         for usr in sorted(self.liste_usr):
             self.boutons_maj = Button(master, text= self.config.get(usr,"name"), width=5, height=1,
@@ -312,11 +312,10 @@ class Questionaire(Frame):
         screen_width = self.diva.winfo_screenwidth()
         screen_height = self.diva.winfo_screenheight()
         Xpos = str(screen_width-160)
-    	self.master.title(self.nom_usr +" " +self.mon_ue)
+        self.master.title(self.nom_usr +" " +self.mon_ue)
         self.diva.master.title('diva')
         self.diva.master.geometry('170x460+'+Xpos+'+50')
-	self.diva.master.overrideredirect(self.diva.always_ontop)
-        #self.diva.master.overrideredirect(self.diva.always_ontop)
+        self.diva.master.overrideredirect(self.diva.always_ontop)
         self.diva.master.wm_iconbitmap(bitmap = "@diva.xbm")
 
 
