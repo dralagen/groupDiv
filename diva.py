@@ -173,7 +173,7 @@ class DivaWidget(tk.Frame):
 
         Hmax=set(H1)
         distancesAmis = {}
-	maxi = len(H1)
+	self.echelle = len(H1)
         for branch in self.friends_branch:
             try:
                 git_log=self.git.log(branch.strip(),format="oneline")
@@ -201,7 +201,7 @@ class DivaWidget(tk.Frame):
             self.mes_amis[branch].set(newFriendDistance)
 
         self.placerXwing((len(self.friends_branch)+1)*len(Hmax)-sumHi)
-	if maxi<20:
+	if self.echelle<20:
 		self.echelle = 20
         newGDtot = (len(self.friends_branch)+1)*len(Hmax)-sumHi
         if self.controlVarGDtot.get() != newGDtot:
