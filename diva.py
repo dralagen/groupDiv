@@ -38,25 +38,25 @@ class DivaWidget(tk.Frame):
     def placerXwing(self, yedlm):
         self.photoXwing = tk.PhotoImage(file = "xwing.gif")
         self.photoXwingU = tk.PhotoImage(file = "xwingUSER.gif")
-	place = False
-	place_min = 300 - self.photoEdlm.height()-self.photoXwing.height()
+        place = False
+        place_min = 300 - self.photoEdlm.height()-self.photoXwing.height()
 
         j = 5
         k = 0
 
         for i in sorted(self.mes_amis.values()):
-		if k == 0:
-                	j = j+5
-			if j == 10:
-				j = -5
-		if self.controlVarDelta.get() < i.get() and (not(self.controlVarDelta.get() >= i.get()) and place==False):
-			self.canvasAnimation.create_image(20+k + self.photoXwingU.width()/2 + j, place_min - (place_min*self.controlVarDelta.get())/self.echelle + self.photoXwingU.height()/2, image = self.photoXwingU)
-			place = True
-			k = (k+40)%120
-               	self.canvasAnimation.create_image(20+k + self.photoXwing.width()/2 + j, place_min - (place_min*i.get())/self.echelle + self.photoXwing.height()/2, image = self.photoXwing)
-            	k = (k+40)%120
-	if(not(place)):
-		self.canvasAnimation.create_image(20+k + self.photoXwingU.width()/2 + j, place_min - (place_min*self.controlVarDelta.get())/self.echelle + self.photoXwingU.height()/2, image = self.photoXwingU)
+            if k == 0:
+                j += 5
+                if j == 10:
+                    j = -5
+            if self.controlVarDelta.get() < i.get() and (not(self.controlVarDelta.get() >= i.get()) and place==False):
+                self.canvasAnimation.create_image(20+k + self.photoXwingU.width()/2 + j, place_min - (place_min*self.controlVarDelta.get())/self.echelle + self.photoXwingU.height()/2, image = self.photoXwingU)
+                place = True
+                k = (k+40)%120
+                self.canvasAnimation.create_image(20+k + self.photoXwing.width()/2 + j, place_min - (place_min*i.get())/self.echelle + self.photoXwing.height()/2, image = self.photoXwing)
+                k = (k+40)%120
+        if not place:
+            self.canvasAnimation.create_image(20+k + self.photoXwingU.width()/2 + j, place_min - (place_min*self.controlVarDelta.get())/self.echelle + self.photoXwingU.height()/2, image = self.photoXwingU)
 
 
     def launch(self):
@@ -147,7 +147,7 @@ class DivaWidget(tk.Frame):
     ######################Affichage des Xwing########################
     #################################################################
         self.canvasAnimation = tk.Canvas(self, width = 150, height = 300)
-	self.echelle = 20
+        self.echelle = 20
         self.photoXwing = tk.PhotoImage(file = "xwing.gif")
         self.photoEdlm = tk.PhotoImage(file = "edlm.gif")
         self.canvasAnimation.create_image(self.photoEdlm.width()/2+50, 300 - self.photoEdlm.height()/2, image = self.photoEdlm)
@@ -173,9 +173,7 @@ class DivaWidget(tk.Frame):
 
         Hmax=set(H1)
         distancesAmis = {}
-        
 
-		
         for branch in self.friends_branch:
             try:
                 git_log=self.git.log(branch.strip(),format="oneline")
@@ -198,21 +196,21 @@ class DivaWidget(tk.Frame):
 
         self.controlVarDelta.set(newDelta)
         
-		self.echelle = newDelta
+        self.echelle = newDelta
 
         for branch in self.friends_branch:
             newFriendDistance = len(Hmax)-distancesAmis[branch]
 
             if newFriendDistance>self.echelle:
-            	self.echelle = newFriendDistance
+                self.echelle = newFriendDistance
 
             if self.mes_amis[branch].get() != newFriendDistance:
                 haveNewDistance = True
             self.mes_amis[branch].set(newFriendDistance)
 
         self.placerXwing((len(self.friends_branch)+1)*len(Hmax)-sumHi)
-	if self.echelle<20:
-		self.echelle = 20
+        if self.echelle<20:
+            self.echelle = 20
         newGDtot = (len(self.friends_branch)+1)*len(Hmax)-sumHi
         if self.controlVarGDtot.get() != newGDtot:
             haveNewDistance = True
