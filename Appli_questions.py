@@ -160,6 +160,7 @@ class Questionaire(Frame):
         self.notebook = Tix.NoteBook(master, width=660)
         self.notebook.add("ue", label="UE")
         self.notebook.add("review", label="Review")
+        self.notebook.add("historique", label = "Historique des commits")
         self.notebook.grid(column=0, row=1, columnspan = 8)
 
         # onglet ue
@@ -173,6 +174,11 @@ class Questionaire(Frame):
         #contient tous les widget de l'onglet commentaire
         self.onglet_review = Frame(self.review)
         self.onglet_review.grid(column=0, row=1)
+
+        #onglet messages
+        self.historiqueCommit = self.notebook.subwidget_list["historique"]
+        self.onglet_historique = Frame(self.historiqueCommit)
+        self.onglet_historique.grid(column = 0, row = 1)
 
     def createWidgetsInUE(self):
 
@@ -251,6 +257,14 @@ class Questionaire(Frame):
         #self.scroll_mon_review_V.grid(column = 3, row = 9, sticky = S + N)
         self.texte_mon_review.grid(column=1, row=9, columnspan=2)
 
+    def createWidgetsInHistoriqueCommit(self):
+        self.scroll_review_historique_V = Scrollbar(self.onglet_historique, orient=VERTICAL)
+        self.texte_historique_commit = Text(self.onglet_historique, width=90, height=43, wrap=WORD)
+        self.texte_historique_commit.config(state=DISABLED, yscrollcommand=self.scroll_review_historique_V.set, background="#DBDBDB", foreground="Black")
+        self.scroll_review_historique_V.config(command=self.texte_historique_commit.yview)
+        self.scroll_review_historique_V.grid(column=1, row=0, sticky=S + N)
+        self.texte_historique_commit.grid(column=0, row=0)
+
     def get_usr_ue_name(self, filename):
         self.config = ConfigParser.RawConfigParser()
         self.config.read(filename)
@@ -291,6 +305,7 @@ class Questionaire(Frame):
         self.createTabs(master)
         self.createWidgetsInUE()
         self.createWidgetsInReview()
+        self.createWidgetsInHistoriqueCommit()
         #bouton qui sert a faire un pull
         self.lable_review = Label(master, text="Se mettre a jour avec:", font=12).grid(column=0, row=0)
 

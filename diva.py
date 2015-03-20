@@ -4,7 +4,7 @@ import ConfigParser
 import threading
 import logging
 
-from git import *
+import git
 
 class DivaWidget(tk.Frame):
 
@@ -50,13 +50,13 @@ class DivaWidget(tk.Frame):
                 if j == 10:
                     j = -5
             if self.controlVarDelta.get() < i.get() and (not(self.controlVarDelta.get() >= i.get()) and place==False):
-                self.canvasAnimation.create_image(20+k + self.photoXwingU.width()/2 + j, place_min - (place_min*self.controlVarDelta.get())/self.echelle + self.photoXwingU.height()/2, image = self.photoXwingU)
+                self.canvasAnimation.create_image(20 + k + self.photoXwingU.width()/2 + j, place_min - (place_min*self.controlVarDelta.get())/self.echelle + self.photoXwingU.height()/2, image = self.photoXwingU)
                 place = True
                 k = (k+40)%120
-                self.canvasAnimation.create_image(20+k + self.photoXwing.width()/2 + j, place_min - (place_min*i.get())/self.echelle + self.photoXwing.height()/2, image = self.photoXwing)
+                self.canvasAnimation.create_image(20 + k + self.photoXwing.width()/2 + j, place_min - (place_min*i.get())/self.echelle + self.photoXwing.height()/2, image = self.photoXwing)
                 k = (k+40)%120
         if not place:
-            self.canvasAnimation.create_image(20+k + self.photoXwingU.width()/2 + j, place_min - (place_min*self.controlVarDelta.get())/self.echelle + self.photoXwingU.height()/2, image = self.photoXwingU)
+            self.canvasAnimation.create_image(20 + k + self.photoXwingU.width()/2 + j, place_min - (place_min*self.controlVarDelta.get())/self.echelle + self.photoXwingU.height()/2, image = self.photoXwingU)
 
 
     def launch(self):
@@ -80,7 +80,7 @@ class DivaWidget(tk.Frame):
         self.always_ontop=int(config.get("diva","always_ontop"))
 
     def init_git(self):
-        repo = Repo(self.my_repo, odbt=GitDB)
+        repo = git.Repo(self.my_repo, odbt=git.GitDB)
         assert repo.bare ==False
         self.git = repo.git
 
@@ -94,7 +94,7 @@ class DivaWidget(tk.Frame):
             try:
                 self.git.remote("update")
                 self.calculateGDtot()
-            except GitCommandError as e:
+            except git.GitCommandError as e:
                 logging.debug(e)
                 pass
 
@@ -163,7 +163,7 @@ class DivaWidget(tk.Frame):
     def calculateGDtot(self):
         try:
             H1=self.git.log(self.my_branch,format="oneline")
-        except GitCommandError:
+        except git.GitCommandError:
             H1 = ""
 
         if H1 != "":
@@ -184,7 +184,7 @@ class DivaWidget(tk.Frame):
                     sumHi += len(Hi)
                     Hmax=Hmax|Hi
                     #################################################################
-            except GitCommandError as e:
+            except git.GitCommandError as e:
                 logging.debug(e)
                 distancesAmis[branch] = 0
 
