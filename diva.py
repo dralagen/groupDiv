@@ -54,9 +54,9 @@ class DivaWidget(tk.Frame):
                 place = True
                 k = (k+40)%120
                 if k == 0:
-					j += 5
-					if j == 10:
-						j = -5
+                    j += 5
+                    if j == 10:
+                        j = -5
             self.canvasAnimation.create_image(20 + k + self.photoXwing.width()/2 + j, place_min - (place_min*i.get())/self.echelle + self.photoXwing.height()/2, image = self.photoXwing)
             k = (k+40)%120
         if not place:
