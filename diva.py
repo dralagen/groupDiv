@@ -49,12 +49,16 @@ class DivaWidget(tk.Frame):
                 j += 5
                 if j == 10:
                     j = -5
-            if self.controlVarDelta.get() < i.get() and (not(self.controlVarDelta.get() >= i.get()) and place==False):
+            if self.controlVarDelta.get() < i.get() and place==False:
                 self.canvasAnimation.create_image(20 + k + self.photoXwingU.width()/2 + j, place_min - (place_min*self.controlVarDelta.get())/self.echelle + self.photoXwingU.height()/2, image = self.photoXwingU)
                 place = True
                 k = (k+40)%120
-                self.canvasAnimation.create_image(20 + k + self.photoXwing.width()/2 + j, place_min - (place_min*i.get())/self.echelle + self.photoXwing.height()/2, image = self.photoXwing)
-                k = (k+40)%120
+                if k == 0:
+					j += 5
+					if j == 10:
+						j = -5
+            self.canvasAnimation.create_image(20 + k + self.photoXwing.width()/2 + j, place_min - (place_min*i.get())/self.echelle + self.photoXwing.height()/2, image = self.photoXwing)
+            k = (k+40)%120
         if not place:
             self.canvasAnimation.create_image(20 + k + self.photoXwingU.width()/2 + j, place_min - (place_min*self.controlVarDelta.get())/self.echelle + self.photoXwingU.height()/2, image = self.photoXwingU)
 
