@@ -290,6 +290,7 @@ class Questionaire(Frame):
     def __init__(self, master=None):
         Frame.__init__(self, master)
         master.title("Interface Tkinter")
+        master.protocol("WM_DELETE_WINDOW", self.quitAction)
         self.repo = Repo(os.environ["DIVA_REPO_DIR"], odbt=GitDB)
         assert not self.repo.bare
         os.environ["GIT_MERGE_AUTOEDIT"] = "no"
@@ -332,6 +333,9 @@ class Questionaire(Frame):
         self.diva.master.geometry('170x460+'+Xpos+'+50')
         self.diva.master.overrideredirect(self.diva.always_ontop)
         self.diva.master.wm_iconbitmap(bitmap = "@diva.xbm")
+
+    def quitAction(self):
+        self.diva.quitAction()
 
 
 
