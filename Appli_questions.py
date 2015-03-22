@@ -373,12 +373,15 @@ class Questionaire(Frame):
         diva_root = Tix.Toplevel(master)
         self.diva = diva.DivaWidget(my_repo=os.environ["DIVA_REPO_DIR"], friends_branch=branchUsr, master=diva_root)
         self.diva.launch()
+        if(sys.argv[2] == "1"):
+            diva_root.withdraw()
+
         screen_width = self.diva.winfo_screenwidth()
         screen_height = self.diva.winfo_screenheight()
         Xpos = str(screen_width-160)
         self.master.title(self.nom_usr +" " +self.mon_ue)
         self.diva.master.title('diva')
-        self.diva.master.geometry('170x460+'+Xpos+'+50')
+        self.diva.master.geometry('170x500+'+Xpos+'+50')
         self.diva.master.overrideredirect(self.diva.always_ontop)
         self.diva.master.wm_iconbitmap(bitmap = "@diva.xbm")
 
