@@ -1,3 +1,4 @@
+# coding=utf-8
 from Tkinter import *
 import ConfigParser
 import Tix
@@ -7,6 +8,7 @@ import socket
 from datetime import datetime
 
 import logging
+import threading
 from git import GitCommandError, Repo
 from gitdb import GitDB
 import diva
@@ -127,6 +129,7 @@ class Questionaire(Frame):
         except GitCommandError as e:
             logging.error(e)
 
+        self.commit_usr[usr] = 0
         self.charger_review()
         self.ui_update(self.choix_ue_a_review.entry.get())
 
@@ -286,6 +289,45 @@ class Questionaire(Frame):
 
                 self.repo.create_remote(section, "git://" + self.config.get(section, "hostname").strip() + "/")
 
+    def threadHistoryCommit(self):
+        while not self.update_stop.is_set():
+            try:
+                self.repo.remote("update")
+                try:
+                    myCommit = len(str(self.repo.git.log("master", format="oneline")).split('\n'))
+                except GitCommandError:
+                    myCommit = 0
+
+                for usr in sorted(self.commit_usr):
+                    try:
+                        if myCommit == 0:
+                            usrCommit = len(str(self.repo.git.log(usr+"/master", format="oneline")).split('\n'))
+                        else:
+                            usrCommit = len(str(self.repo.git.execute(["git", "log", "HEAD.." + usr + "/master", "--oneline"])).split('\n'))
+
+                        if usrCommit > sorted(self.commit_usr[usr], reverse=True):
+                            nbCommit = usrCommit - self.commit_usr[usr]
+                            logCommit = usr + " à fait "
+                            logCommit += str(nbCommit)
+                            logCommit += " commit"
+                            if nbCommit > 1:
+                                logCommit +="s"
+                            logCommit += "\n"
+
+                            self.texte_historique_commit.config(state=NORMAL)
+                            self.texte_historique_commit.insert('0.0', logCommit)
+                            self.texte_historique_commit.config(state=DISABLED)
+                            self.commit_usr[usr] = usrCommit
+                    except GitCommandError:
+                        pass
+
+            except GitCommandError:
+                pass
+
+            # wait 5 secondes
+            self.update_stop.wait(5)
+        pass
+
 
     def __init__(self, master=None):
         Frame.__init__(self, master)
@@ -319,8 +361,14 @@ class Questionaire(Frame):
             i += 1
 
         branchUsr = []
+        self.commit_usr = {}
         for branch in self.liste_usr:
             branchUsr.append(branch+"/master")
+            self.commit_usr[branch] = 0
+
+        self.update_stop=threading.Event()
+        self.thread=threading.Thread(target=self.threadHistoryCommit)
+        self.thread.start()
 
         diva_root = Tix.Toplevel(master)
         self.diva = diva.DivaWidget(my_repo=os.environ["DIVA_REPO_DIR"], friends_branch=branchUsr, master=diva_root)
@@ -335,6 +383,10 @@ class Questionaire(Frame):
         self.diva.master.wm_iconbitmap(bitmap = "@diva.xbm")
 
     def quitAction(self):
+        self.update_stop.set()
+        if self.thread.isAlive():
+            self.thread.join()
+            self.master.quit()
         self.diva.quitAction()
 
 
