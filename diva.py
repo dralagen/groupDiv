@@ -225,7 +225,6 @@ def main():
     app = DivaWidget()
     app.launch()
     screen_width = app.winfo_screenwidth()
-    screen_height = app.winfo_screenheight()
     Xpos = str(screen_width-160)
     app.master.title('diva')
     app.master.geometry('170x500+'+Xpos+'+50')
