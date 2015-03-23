@@ -42,9 +42,33 @@ git remote show origin
 ```
 
 
---------
-Create 6 directory:
-User1 to User6
+How to launch the experience
+-----------------------------
+
+Before you need to define the location of your repo with 
+```
+export DIVA_REPO_DIR=/path/to/repo
+```
+After you need to setup your repo and launch a git daemon to give access to other user
+```
+./setupNetworkProject.sh
+```
+
+You can configure the information of other user in users.cfg formatted as 
+```
+[usr1]
+hostname = usr1-pc
+name = Name of user 1
+ue = question of usr1
+```
+
+To launch the experience just with one of this commands
+```
+# with diva
+python2.7 ./Appli_questions.py ./users.cfg 
+# without diva
+python2.7 ./Appli_questions.py ./users.cfg 1
+```
 
 
 Documents
