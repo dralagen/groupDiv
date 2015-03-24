@@ -298,14 +298,14 @@ class Questionaire(Frame):
                 except GitCommandError:
                     myCommit = 0
 
-                for usr in sorted(self.commit_usr):
+                for usr in sorted(self.commit_usr, reverse=True):
                     try:
                         if myCommit == 0:
                             usrCommit = len(str(self.repo.git.log(usr+"/master", format="oneline")).split('\n'))
                         else:
                             usrCommit = len(str(self.repo.git.execute(["git", "log", "HEAD.." + usr + "/master", "--oneline"])).split('\n'))
 
-                        if usrCommit > sorted(self.commit_usr[usr], reverse=True):
+                        if usrCommit > self.commit_usr[usr]:
                             nbCommit = usrCommit - self.commit_usr[usr]
                             logCommit = usr + " à fait "
                             logCommit += str(nbCommit)
