@@ -144,6 +144,9 @@ class DivaWidget(tk.Frame):
         self.echelle = 20
         self.photoXwing = tk.PhotoImage(file = "xwing.gif")
         self.photoEdlm = tk.PhotoImage(file = "edlm.gif")
+        self.photoYoda = tk.PhotoImage(file = "yoda.gif")
+        self.canvasAnimation.create_image(self.photoYoda.width()/2+50, 300 - self.photoYoda.height()/2, image = self.photoYoda)
+
         self.canvasAnimation.create_image(self.photoEdlm.width()/2+50, 300 - self.photoEdlm.height()/2, image = self.photoEdlm)
         self.placerXwing(0)
         self.canvasAnimation.grid(column=0, row = z, columnspan=2)
@@ -208,6 +211,12 @@ class DivaWidget(tk.Frame):
         if self.controlVarGDtot.get() != newGDtot:
             haveNewDistance = True
         self.controlVarGDtot.set(newGDtot)
+
+        if newGDtot == 0:
+            self.canvasAnimation.create_image(self.photoYoda.width()/2+50, 300 - self.photoYoda.height()/2, image = self.photoYoda)
+        else:
+            self.canvasAnimation.create_image(self.photoEdlm.width()/2+50, 300 - self.photoEdlm.height()/2, image = self.photoEdlm)
+
 
         if haveNewDistance:
             if logging.getLogger().getEffectiveLevel() == logging.INFO \
