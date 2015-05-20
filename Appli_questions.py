@@ -115,10 +115,12 @@ class Questionaire(Frame):
         fichier.close()
 
         # commit change
-
         self.repo.index.add([nom_fichier], False)
         hashCommit = self.repo.index.commit("add review by " + self.nom_usr)
         logging.info("commit new review :"+str(hashCommit))
+
+        # reload review
+        self.charger_review()
 
     # pour pull un usr, cette methode est utilisee par les sept boutons de pull,
     # le parametre usr sert a connaitre quel bouton est utilise
