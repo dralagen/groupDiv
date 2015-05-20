@@ -56,11 +56,11 @@ class Questionaire(Frame):
                     k = key
             v = temp[k][0]
             mes_donnees = v.split("|")
-            if mes_donnees[1] in self.les_review:
-                p = mes_donnees[1]
+            p = mes_donnees[1].decode("UTF-8")
+            if p in self.les_review:
                 self.les_review[p].append(mes_donnees[2])
             else:
-                self.les_review[mes_donnees[1]] = [mes_donnees[2]]
+                self.les_review[p] = [mes_donnees[2]]
             temp[k].remove(v)
             if not temp[k]:
                 del temp[k]
@@ -100,7 +100,7 @@ class Questionaire(Frame):
         maintenant = datetime.now()
         fichier.write((
             str(maintenant.hour).zfill(2) + str(maintenant.minute).zfill(2) + str(maintenant.second).zfill(
-                2) + "|" + self.choix_ue_a_review.entry.get() + "|" + self.nom_usr + ": " + newReview + "\n"))
+                2) + "|" + self.choix_ue_a_review.entry.get().encode("UTF-8") + "|" + self.nom_usr + ": " + newReview + "\n"))
 
         self.review.config(state=NORMAL)
         self.review.insert(END, self.nom_usr + ": " + newReview + "\n")
