@@ -156,16 +156,23 @@ class Questionaire(Frame):
         self.review_mon_ue.delete(1.0, END)
         self.review_mon_ue.insert(END, self.string_review(self.mon_ue))
         self.review_mon_ue.config(state=DISABLED)
+    
+    def consultation_des_log(self):
+    	#TODO ajouter log consultation de l'historique
+	print "log histo OK"
 
+    def arret_consultation_des_log(self):
+	#TODO ajouter log arret consultation de l'historique
+	print "log histo ARRET"
 
     def createTabs(self, master):
 
 
         # definition des onglets
         self.notebook = Tix.NoteBook(master, width=660)
-        self.notebook.add("ue", label="UE")
-        self.notebook.add("review", label="Review")
-        self.notebook.add("historique", label = "Historique des commits")
+        self.notebook.add("ue", label="UE", raisecmd=self.arret_consultation_des_log)
+        self.notebook.add("review", label="Review", raisecmd=self.arret_consultation_des_log)
+        self.notebook.add("historique", label = "Historique des commits", raisecmd=self.consultation_des_log)
         self.notebook.grid(column=0, row=1, columnspan = 8)
 
         # onglet ue
