@@ -158,12 +158,12 @@ class Questionaire(Frame):
         self.review_mon_ue.config(state=DISABLED)
     
     def consultation_des_log(self):
-    	#TODO ajouter log consultation de l'historique
-	print "log histo OK"
+        #TODO ajouter log consultation de l'historique
+        print "log histo OK"
 
     def arret_consultation_des_log(self):
-	#TODO ajouter log arret consultation de l'historique
-	print "log histo ARRET"
+        #TODO ajouter log arret consultation de l'historique
+        print "log histo ARRET"
 
     def createTabs(self, master):
 
@@ -337,47 +337,37 @@ class Questionaire(Frame):
             self.update_stop.wait(5)
         pass
 
-    def changer_affichage_groupDiv(self, event):
+    def onKeyPress(self, event):
+        if repr(event.keysym) == self.konami_code['keymap'][self.konami_code['indice']]:
+            self.konami_code['indice'] += 1
+        else:
+            self.konami_code['indice'] = 0
 
-	if repr(event.keysym) == "'Up'" and (self.konami_code == 0 or self.konami_code == 1):
-		self.konami_code = self.konami_code +1
-	elif repr(event.keysym) == "'Down'" and (self.konami_code == 2 or self.konami_code == 3):
-		self.konami_code = self.konami_code +1
-	elif repr(event.keysym) == "'Left'" and (self.konami_code == 4 or self.konami_code == 6):
-		self.konami_code = self.konami_code +1
-	elif repr(event.keysym) == "'Right'" and (self.konami_code == 5 or self.konami_code == 7):
-		self.konami_code = self.konami_code +1
-	elif repr(event.keysym) == "'b'" and (self.konami_code == 8):
-		self.konami_code = self.konami_code +1
-	elif repr(event.keysym) == "'a'" and (self.konami_code == 9):
-		self.konami_code = self.konami_code +1
-	else:
-		self.konami_code = 0
-	if self.konami_code == 10:
-		if self.hide == True:
-			self.diva_root.deiconify()
-			self.konami_code = 0
-			self.hide = False
-		else:
-			self.diva_root.withdraw()
-			self.hide = True
-			self.konami_code = 0
+        print self.konami_code['indice']
+        print len(self.konami_code['keymap'])
 
-	print self.konami_code
+        if self.konami_code['indice'] >= len(self.konami_code['keymap']):
+            self.konami_code['indice'] = 0
+            self.konami_code['cmd']()
+
+    def toogleDiva(self):
+        self.hide = not self.hide
+        if self.hide:
+            self.diva_root.withdraw()
+        else:
+            self.diva_root.deiconify()
+
 
     def __init__(self, master=None):
         Frame.__init__(self, master)
         master.title("Interface Tkinter")
         master.protocol("WM_DELETE_WINDOW", self.quitAction)
-	self.konami_code = 0;
-	self.hide = False
-	#Detection code konami
-	master.bind("<Up>", self.changer_affichage_groupDiv)
-	master.bind("<Down>", self.changer_affichage_groupDiv)
-	master.bind("<Left>", self.changer_affichage_groupDiv)
-	master.bind("<Right>", self.changer_affichage_groupDiv)
-	master.bind("<b>", self.changer_affichage_groupDiv)
-	master.bind("<a>", self.changer_affichage_groupDiv)
+        self.konami_code = { 'indice' : 0,
+                             'keymap' : ("'Up'", "'Up'", "'Down'", "'Down'", "'Left'", "'Right'", "'Left'", "'Right'", "'b'", "'a'"),
+                             'cmd': self.toogleDiva }
+        self.hide = False
+        #Detection code konami
+        master.bind("<KeyPress>", self.onKeyPress)
 
 
         self.repo = Repo(os.environ["DIVA_REPO_DIR"], odbt=GitDB)
