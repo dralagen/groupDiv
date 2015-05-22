@@ -343,9 +343,6 @@ class Questionaire(Frame):
         else:
             self.konami_code['indice'] = 0
 
-        print self.konami_code['indice']
-        print len(self.konami_code['keymap'])
-
         if self.konami_code['indice'] >= len(self.konami_code['keymap']):
             self.konami_code['indice'] = 0
             self.konami_code['cmd']()
