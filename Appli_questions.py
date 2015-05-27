@@ -73,11 +73,14 @@ class Questionaire(Frame):
         return mes_review
 
     def envoyer_mon_ue(self):
+        self.envoyer.config(state=DISABLED)
         nom_fichier = "texte_" + self.mon_ue + ".txt"
         oldContent = self.get_file_content(nom_fichier).strip()
         newContent = self.texte_mon_ue.get(1.0, END).encode("UTF-8").strip()
         if oldContent == newContent:
             return
+
+        self.oldTextUe = newContent
 
         fichier = open(self.repo.working_dir+"/"+nom_fichier, "w")
         fichier.write(newContent)
@@ -185,11 +188,19 @@ class Questionaire(Frame):
         self.onglet_historique = Frame(self.historiqueCommit)
         self.onglet_historique.grid(column = 0, row = 1)
 
+    def updateStateButtonSend(self):
+        if self.oldTextUe != self.texte_mon_ue.get(1.0, END).encode("UTF-8").strip() :
+            self.envoyer.config(state=NORMAL)
+        else:
+            self.envoyer.config(state=DISABLED)
+
+
     def createWidgetsInUE(self):
 
         # bouton qui sert a faire un commit
         self.envoyer = Button(self.onglet_ue, text="Envoyer", width=5, height=20, command=self.envoyer_mon_ue)
         self.envoyer.grid(column=5, row=3)
+        self.envoyer.config(state=DISABLED)
 
         self.label_mon_ue = Label(self.onglet_ue, text="Description " + self.mon_ue).grid(column=1, row=0, columnspan=1)
 
@@ -200,10 +211,12 @@ class Questionaire(Frame):
         if not init_text_ue:
             init_text_ue = "Pre-requis:\n\n\n\nCompetences acquises:\n\n\n\nProgramme:\n\n\n\nAmeliorations a apporter:\n\n\n\n"
         self.texte_mon_ue.insert(END, init_text_ue)
+        self.oldTextUe = self.texte_mon_ue.get(1.0, END).encode("UTF-8").strip()
         self.texte_mon_ue.config(yscrollcommand=self.scroll_texte_mon_ue_V.set, background="#FFFFFF", foreground="Black")
         self.scroll_texte_mon_ue_V.config(command=self.texte_mon_ue.yview)
         self.scroll_texte_mon_ue_V.grid(column=4, row=1, rowspan=5, sticky=S + N)
         self.texte_mon_ue.grid(column=0, row=1, columnspan=3, rowspan=5)
+        self.texte_mon_ue.bind('<KeyPress>', lambda event: threading.Thread(target=self.updateStateButtonSend).start())
 
         #zone review
         self.label_review_mon_ue = Label(self.onglet_ue, text="Les review de mon UE").grid(column=1, row=6,
