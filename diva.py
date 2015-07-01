@@ -149,7 +149,7 @@ class DivaWidget(tk.Frame):
 
         self.canvasAnimation.create_image(self.photoEdlm.width()/2+50, 300 - self.photoEdlm.height()/2, image = self.photoEdlm)
         self.placerXwing(0)
-        self.canvasAnimation.grid(column=0, row = z, columnspan=2)
+        self.canvasAnimation.grid(column=0, row = z, columnspan=2, pady=20)
 
     def quitAction(self):
         self.update_stop.set()
@@ -236,7 +236,7 @@ def main():
     screen_width = app.winfo_screenwidth()
     Xpos = str(screen_width-160)
     app.master.title('diva')
-    app.master.geometry('170x500+'+Xpos+'+50')
+    app.master.geometry('170x520+'+Xpos+'+50')
     app.master.overrideredirect(app.always_ontop)
     app.master.wm_iconbitmap(bitmap = "@diva.xbm")
     app.mainloop()

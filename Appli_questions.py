@@ -169,7 +169,7 @@ class Questionaire(Frame):
         self.notebook.add("ue", label="UE", raisecmd=lambda :self.goTo("UE"))
         self.notebook.add("review", label="Review", raisecmd=lambda :self.goTo("Review"))
         self.notebook.add("historique", label = "Historique des commits", raisecmd=lambda :self.goTo("History"))
-        self.notebook.grid(column=0, row=1, columnspan = 8)
+        self.notebook.grid(column=0, row=1, columnspan = 8, pady=20, padx=35)
 
         # onglet ue
         self.ue = self.notebook.subwidget_list["ue"]
@@ -390,7 +390,7 @@ class Questionaire(Frame):
         self.createWidgetsInReview()
         self.createWidgetsInHistoriqueCommit()
         #bouton qui sert a faire un pull
-        self.lable_review = Label(master, text="Se mettre a jour avec:", font=12).grid(column=0, row=0)
+        self.lable_review = Label(master, text="Se mettre a jour avec:", font=12).grid(column=0, row=0, pady=35, padx=35)
 
         i = 1
 
@@ -418,10 +418,10 @@ class Questionaire(Frame):
             self.hide = True
 
         screen_width = self.diva.winfo_screenwidth()
-        Xpos = str(screen_width-160)
+        Xpos = str(screen_width-240)
         self.master.title(self.nom_usr +" " +self.mon_ue)
         self.diva.master.title('diva')
-        self.diva.master.geometry('170x500+'+Xpos+'+50')
+        self.diva.master.geometry('170x520+'+Xpos+'+50')
         self.diva.master.overrideredirect(self.diva.always_ontop)
         self.diva.master.wm_iconbitmap(bitmap = "@diva.xbm")
 
