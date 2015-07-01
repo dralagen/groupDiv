@@ -154,7 +154,7 @@ class DivaWidget(tk.Frame):
     def quitAction(self):
         self.update_stop.set()
         if self.thread.isAlive():
-            self.thread.join()
+            self.thread.join(5)
             self.master.quit()
 
     def calculateGDtot(self):
@@ -186,13 +186,13 @@ class DivaWidget(tk.Frame):
                 distancesAmis[branch] = 0
 
         haveNewDistance = False
-        
+
         newDelta = len(Hmax)-len(H1)
         if self.controlVarDelta.get() != newDelta:
             haveNewDistance = True
 
         self.controlVarDelta.set(newDelta)
-        
+
         self.echelle = max(newDelta,20)
 
         for branch in self.friends_branch:
