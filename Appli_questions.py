@@ -428,12 +428,16 @@ class Questionaire(Frame):
     def quitAction(self):
         self.update_stop.set()
         if self.thread.isAlive():
-            self.thread.join()
+            self.thread.join(5)
             self.master.quit()
-        self.diva.quitAction()
 
+        self.diva.quitAction()
 
 
 root = Tix.Tk()
 app = Questionaire(master=root)
-app.mainloop()
+try:
+    app.mainloop()
+except  KeyboardInterrupt:
+    app.quitAction()
+
